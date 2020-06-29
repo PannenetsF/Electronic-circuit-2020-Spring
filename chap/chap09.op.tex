@@ -1,0 +1,35 @@
+\ifx\mainclass\undefined
+\documentclass[cn,11pt,chinese,black,simple]{../elegantbook}
+\usepackage{array}
+\input{../needed.tex}
+\begin{document}
+\fi 
+
+% Start Here
+
+\chapter{理想运放}
+
+\section{概念}
+
+开环电压增益\(A_{od}\)无穷大，
+差模输入电阻无穷大，
+带宽无穷大，
+共模抑制比无穷大，
+输出电阻为零，
+噪声为零。
+
+运放分为线性工作区和非线性工作区 (正向/负向饱和区)。用来设计运算电路时，处于线性工作区。用来设计比较器时，处于非线性工作区。
+
+线性区有 \(u_o = A_{od} (u_p - u_n)\)。
+
+理想运放有虚短和虚断。
+
+\qfig{f99.png}{理想运放}
+
+好的，复习不完了，这里就咕咕咕了。
+
+% End Here
+
+\ifx\mainclass\undefined
+\end{document}
+\fi 

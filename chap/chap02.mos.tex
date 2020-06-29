@@ -1,0 +1,124 @@
+\ifx\mainclass\undefined
+\documentclass[cn,11pt,chinese,black,simple]{../elegantbook}
+\input{../needed.tex}
+\begin{document}
+\fi 
+
+% Start Here
+\renewcommand\arraystretch{1.5}
+
+\chapter{MOS-FET基础}
+
+\section{工作区间}
+
+\begin{longtable}{llll}
+    \caption{MOS管工作区间\protect\footnotemark} \\
+    \toprule 区间 & \(U_{GS}\) & \(U_{GD}\) & \(I_D\) \\
+    \midrule
+    \endfirsthead
+    
+    \toprule 区间 & \(U_{GS}\) & \(U_{GD}\) & \(I_D\) \\
+    \midrule
+    \endhead
+
+    \hline
+    \multicolumn{4}{c}{见下页}\\   
+    \bottomrule
+    \endfoot
+
+    \bottomrule
+    \endlastfoot
+
+    \footnotetext{\(V_{TH} = V_{TH,0} + \gamma (\sqrt{2 \Phi_F + V_{SB}} - \sqrt{2 \Phi_F})\)}
+    截止 & \(< V_{TH}\) &  & \(0\)  \\
+    线性 & \(> V_{TH}\) & \(\geq V_{TH}\) & \( \mu_n C_{ox} \frac{W}{L} \left[(V_{GS}-V_{TH})V_{DS}-\frac{1}{2}V_{DS}^2\right] \) \\
+    饱和 & \(> V_{TH}\) & \(\leq V_{TH}\) & \(\frac{1}{2}\mu_n C_{ox} \frac{W}{L} \left[(V_{GS}-V_{TH})V_{DS}-\frac{1}{2}V_{DS}^2\right](1+\lambda V_{DS})\)
+    
+\end{longtable}
+
+\section{放大器基础}
+
+\subsection{辅助定理}
+
+在线性电路中，电压增益满足\[A_v = - G_m R_{out}\] ，其中 \(G_m\) 为输出接地的跨导， \(R_{out}\) 为输入置零时的输出电阻。
+
+
+\subsection{阻抗变换}
+
+对于放大器常用阻抗变换来计算某一端的等效电阻，图中是代表进行偏置的 MOS 管。
+
+\qfig{f3.png}{阻抗变换}
+
+
+
+对于漏极：\[
+R_{eq} = (1 + (g_m + g_{mb})r_o)R_s + r_o = (1 + (g_m + g_{mb})R_s)r_o + R_s
+\]
+
+对于源极：
+\[
+R_{eq} = \frac{R_D + r_o}{1 + (g_m + g_{mb}) r_o}    
+\]
+
+特殊的，当无负载时，对于漏极：\[
+R_{eq} = r_o
+\]
+
+对于源极：
+\[
+R_{eq} = r_o \| \frac{1}{g_m} \| \frac{1}{g_{mb}} 
+\]
+
+\subsection{分流原理}
+
+可以看作是负载电阻和沟道电阻对电流源进行分流，那么 
+
+\[I_{out} = \frac{r_o}{R_s + R_o} g_m V_{in}\]
+
+
+\begin{figure}[htb]
+    \centering
+    \begin{circuitikz}
+        \draw (2,4) node[ground]{} node[above]{Out} to (1,4) 
+        node[currarrow, xscale=-1]{} node[above]{$I_{out}$}
+        to (0,4) to[R={$R_s$}] (0,2) 
+            to[cI={\  }, l=$g_m V_{in}$, -]
+            (0,0) node[ground](GND){};
+        \draw (0,2) node[circ]{}  to (2,2) 
+        to[R=$r_o$] (2,0) 
+        node[ground]{};
+    \end{circuitikz}
+    \caption{基本分流结构}
+\end{figure}
+
+\section{典型放大器}
+
+
+\begin{longtable}{ll}
+    \caption{MOS单级放大器} \\
+    \toprule \textbf{指标} & \textbf{特点} \\
+    \midrule
+    \endfirsthead
+    
+    \toprule \textbf{指标} & \textbf{特点} \\
+    \midrule
+    \endhead
+
+    \hline
+    \multicolumn{2}{c}{见下页}\\   
+    \bottomrule
+    \endfoot
+
+    \bottomrule
+    \endlastfoot
+    共源级         & 输入电阻大，反向放大，有增益，适合基本放大。 \\
+    源随器         & 增益近似为1，输出电阻小，适合做缓冲级。   \\
+    共栅级         & 有输入电阻，而且较低，能接收电流。      \\
+    共源共栅级       & 超高的增益，但牺牲摆幅。    
+    
+\end{longtable}
+% End Here
+
+\ifx\mainclass\undefined
+\end{document}
+\fi 

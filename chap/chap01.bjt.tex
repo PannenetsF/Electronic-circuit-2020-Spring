@@ -1,0 +1,113 @@
+\ifx\mainclass\undefined
+\documentclass[cn,11pt,chinese,black,simple]{../elegantbook}
+\usepackage{array}
+\newcommand{\ccr}[1]{\makecell{{\color{#1}\rule{1cm}{1cm}}}}
+\newcommand{\qfig}[2]{\begin{figure}[!htb]
+    \centering
+    \includegraphics[width=0.6\textwidth]{#1}
+    \caption{#2}
+  \end{figure}}
+\begin{document}
+\fi 
+
+% Start Here
+\chapter{BJT放大电路}
+
+\section{工作区间}
+
+\begin{longtable}{llll}
+    \caption{三极管工作区间} \\
+    \toprule 区间 & \(U_{BE}\) & \(U_{CE}\) & \(I_C\) \\
+    \midrule
+    \endfirsthead
+    
+    \toprule 区间 & \(U_{BE}\) & \(U_CE\) & \(I_C\) \\
+    \midrule
+    \endhead
+
+    \hline
+    \multicolumn{4}{c}{见下页}\\   
+    \bottomrule
+    \endfoot
+
+    \bottomrule
+    \endlastfoot
+
+    截止 & \(< U_{on}\) & \(> U_{BE}\) & \(\leq I_{CEO}\)  \\
+    放大 & \(\geq U_{on}\) & \(\geq U_{BE}\) & \(\beta I_{B}\) \\
+    饱和 & \(\geq U_{in}\) & \(\leq U_{BE}\) & \(< \beta I_B\)
+    
+\end{longtable}
+
+\section{直流通路}
+
+直流通路静态工作点的求解过程：
+
+\qfig{f1.png}{一个BJT放大电路}
+
+\begin{solution}
+    \begin{enumerate}
+        \item 确定基极电势，由于基极电流极小，将之视为开路： \[U_{BB} = \frac{R_{b1}}{R_{b1}+R_{b2} V_{CC}}\]
+        \item 确定基极电流，对供电电路进行戴维南等效：\[U_{eq} = U_{BB}\] \[R_{eq} = R_{b1} \| R_{b2}\]
+        
+        利用基尔霍夫电压定律列方程： \[U_{eq} = I_{BQ}  R_{eq} + U_{BEQ} + I_{BQ}  (1 + \beta)  R_e\]
+        其中\(U_{BEQ}\)是基极与射极间固定的电压降
+        \item 确定集电极射极的电势差：\[U_{CEQ} = V_{CC} - R_c  \beta I_{BQ} - R_e  (1 + \beta) I_{BQ}\]
+        或者 \[U_{CEQ} \approx V_{CC} - R_c * \beta I_{BQ} - R_e   \beta I_{BQ}\] 
+    \end{enumerate}
+\end{solution}
+
+\qfig{f2.png}{戴维南等效}
+
+\section{交流通路}
+
+交流通路求解较为简单，只需注意一点
+
+\[r_{be} = r_{bb'} + \frac{U_T}{I_{BQ}}\]
+
+
+\section{三种基本放大器}
+
+
+\begin{longtable}{llll}
+    \caption{BJT放大器} \\
+    \toprule \textbf{指标} & \textbf{共射} & \textbf{共集} & \textbf{共基} \\
+    \midrule
+    \endfirsthead
+    
+    \toprule \textbf{指标} & \textbf{共射} & \textbf{共集} & \textbf{共基} \\
+    \midrule
+    \endhead
+
+    \hline
+    \multicolumn{4}{c}{见下页}\\   
+    \bottomrule
+    \endfoot
+
+    \bottomrule
+    \endlastfoot
+
+    $A_i$       & 大           & 大                                                         & 小           \\
+    $A_v$       & 大           & 小                                                         & 大           \\
+    $R_i$       & 中           & 大                                                         & 小           \\
+    $R_o$       & 大           & 小                                                         & 大           \\
+    \hline 用途          & 低频电压放大器     & \begin{tabular}[c]{@{}l@{}}输入级、\\ 输出级、\\ 缓冲器\end{tabular} & 宽频带放大器     
+
+    
+\end{longtable}
+
+\section{失真分析}
+
+失真的发生代表放大器从正常工作的放大区，滑向了截至区或者饱和区。
+
+以共射为例，
+Q 点过低，小信号的波动使得放大器发生截止失真；Q 点过高，小信号的波动使得放大器发生饱和失真。又共射放大器为反向放大器，失真波形分别位于顶部与底部。
+
+
+
+
+% End Here
+
+\ifx\mainclass\undefined
+\end{document}
+\fi 

@@ -1,0 +1,167 @@
+\ifx\mainclass\undefined
+\documentclass[cn,11pt,chinese,black,simple]{../elegantbook}
+\usepackage{array}
+\input{../needed.tex}
+\begin{document}
+\fi 
+
+% Start Here
+\chapter{噪声}
+
+
+臊声限制了一个电路能够正确处理的最小信号电平， 现今的模拟电路没计者经常考虑
+噪声的问題， 因为噪声与功耗、速度和线性度之间是互相制约的。
+
+\section{噪声的统计特性}
+
+噪声是一个随机过程。
+在时域中的瞬时值是不可
+预测的。
+噪声的平均功率是可以
+预测的。
+允许我们用统计模型研究噪声。
+
+\subsection{平均功率}
+
+\(R_L\) 负载上消耗的平均功率为
+
+$$\begin{array}{l}
+    P_{a v}=\lim _{T \rightarrow \infty} \frac{1}{T} \int_{-T / 2}^{+T / 2} \frac{x^{2}(t)}{R_{L}} d t \\
+    
+\end{array}$$
+
+简化之后
+
+\[P_{a v}=\lim _{T \rightarrow \infty} \frac{1}{T} \int_{-T / 2}^{+T / 2} x^{2}(t) d t\]
+
+实际功率同样可以由 \(\dfrac{P_{av}}{R_L}\) 得到。
+
+\subsection{功率谱密度}
+
+频谱描述的是噪声的频率分布，也叫功率谱密度(PSD)，说明每个频率上信号的功率
+噪声波形x(t)的功率谱密度 \(S_{X}(f)\) 定义为：
+\(x(t)\) 在 \(f\) 附近的1Hz带宽中携带的平均功率。
+
+与 \(P_{a v}\) 一样， \(S_{X}(f)\) 通常省略 \(R_{L},\) 用 \(V^{2} / H z\)表示，而不是\(W / H z_{\circ}\) 。
+对 \(S_{X}(f)\) 求平方根也很常见，用 \(V / \sqrt{H z}\) 表示结果。
+常见的噪声频谱的类型是“白噪声" 一在所有频率的值相同。
+严格地说，白噪声并不存在，因为噪声所携带的总功率不可能
+是无限的。
+在一段频带内平坦的噪声频谱通常被称为白噪声。
+
+在系统函数为 \(H(s)\) 的系统中 输入的噪声谱引 \(S_X(f)\) 起的输出噪声谱 \(S_Y(f)\) 满足 
+
+\[S_Y(f) = S_X(f) \abs{H(f)}^2\] 
+
+其中 \(H(f) = H(s)\left|_{s = j\omega = j 2 \pi f}\right.\)
+
+对于实数信号，其噪声谱是频域的偶函数，因此可以分为双边谱与单边谱。
+
+\subsection{噪声的概率分布}
+
+虽然噪声的瞬时值是不可预测的，但是通过足够长时间的观
+察噪声波形来构造幅值的“分布”是可能的。
+
+中心极限定理指出，如果加入许多具有任意概率密度函数的
+独立随机过程，总和的概率密度函数近似于高斯分布。
+
+本课程中用频谱分析更多。
+
+\section{噪声源特性}
+
+\subsection{相干性}
+
+对于给定的两种噪声 \(x_1(t)\) ， \(x_2(t)\) 其噪声之和会体现两者的相干性。
+
+\[\begin{aligned}
+    P_{a v}=& \lim _{T \rightarrow \infty} \frac{1}{T} \int_{-T / 2}^{+T / 2}\left[x_{1}(t)+x_{2}(t)\right]^{2} d t \\
+    =& \lim _{T \rightarrow \infty} \frac{1}{T} \int_{-T / 2}^{+T / 2} x_{1}^{2}(t) d t+\lim _{T \rightarrow \infty} \frac{1}{T} \int_{-T / 2}^{+T / 2} x_{2}^{2}(t) d t \\
+    &+\lim _{T \rightarrow \infty} \frac{1}{T} \int_{-T / 2}^{+T / 2} 2 x_{1}(t) x_{2}(t) d t \\
+    =& P_{a v 1}+P_{a v 2}+\lim _{T \rightarrow \infty} \frac{1}{T} \int_{-T / 2}^{+T / 2} 2 x_{1}(t) x_{2}(t) d t
+\end{aligned}\]
+
+独立器件产生的噪声波形是不相关的。
+
+\subsection{信噪比}
+
+信噪比 (SNR) 即信号与噪声噪声之比，被噪声干扰的信号，信噪比要足够高才能被解答。
+
+\[SNR = \frac{P_{sig}}{P_{noise}}\]
+
+根据噪声频谱密度 
+
+\[P_{noise} = \aint S_{noise}(f) \dd{f} \]
+
+频谱越宽，总的噪声功率越大，因此对于宽带放大器，特定频带的信号就会被整个频带的噪声破坏。所以电路的带宽必须限制在最小可接受值，以使总集成噪声功率
+最小化。
+
+\section{噪声分析}
+
+整体流程可以分为记录器件的输入噪声频谱，分析到输出的传递函数，利用 \(S_Y(f) = S_X(f) \abs{H(f)}^2\) 分析输出噪声频谱，对输出求和得到总的输出频谱，对频率积分获得总噪声功率。
+
+\subsection{电阻}
+
+导体中电子的随机运动尽管平均电流为零， 但是它会引起导体两端电压的波动。电阻的热噪声可以用单边谱密度的串联电压源来模拟
+
+\[S_v(f) = \bar{V_R^2 }= 4 k T R\]
+
+并联电流源 
+
+\[\bar{I_n^2} = \dfrac{4 k T}{R}\]
+
+\(k\) 是玻尔兹曼常数。
+
+\qfig{f49.png}{电阻噪声模型-电压源}
+
+\qfig{f50.png}{电阻噪声模型-电流源}
+
+\subsection{MOS 管}
+
+\subsubsection{沟道噪声}
+
+MOS 晶体管热噪声，主要是沟道噪声。对于\textbf{饱和}工作的\textbf{长沟道}MOS器件，沟道噪声可以通过一个连
+接在漏极和源极之间的电流源来模拟
+
+\[\bar{I_n ^2} = 4 k T \gamma g_m \]
+
+此处的 \(\gamma\) 不是体效应系数， 对于长沟道晶体管是 \(\dfrac{2}{3}\) ，对于
+亚微米MOS管更高。
+
+\qfig{f51.png}{MOS 管噪声模型}
+
+沟道电阻 \(r_o\) 不产生噪声，因为它不是一个实际的电阻。
+
+\subsubsection{栅极电阻噪声}
+
+对于宽晶体管，源极和漏极电阻可忽略不计，而栅极分布电阻较为显著。
+
+\[\bar{V^2_{nR_G}} = 4 k T \dfrac{R_G}{3}\]
+
+\qfig{f52.png}{栅极电阻噪声}
+
+\qfig{f53.png}{栅极分布电阻噪声模型}
+
+为了使得栅极电阻噪声可以忽略不计，其影响应远小于沟道噪声
+
+\[4 k T \frac{R_{G}}{3}\left(g_{m} r_{O}\right)^{2} \ll\left(4 k T \gamma g_{m}\right) r_{O}^{2} \Rightarrow \frac{R_{G}}{3} \ll \frac{\gamma}{g_{m}}\]
+
+上式通常可以成立。
+
+\subsubsection{闪烁噪声}
+
+在栅极氧化物和硅衬底之间的界面上出现许多“悬空”键，
+产生额外的能态。
+在界面上移动的载流子被随机捕获，随后被这种能量态释放，
+在漏电流中引入“闪烁”噪声，模拟成与栅极串联的电压源，在饱和区大致为
+
+\[\bar{V_n^2} = \dfrac{K}{C_{ox} WL} \dfrac{1}{f}\]
+
+\(K\)是一个与工艺相关的常数，其数量级为 \(10^{-25} V^{2} F\)。可以看出噪声谱密度与频率成反比，即捕获和释放现象多发生在低频，也称为“ \(1/f\) ”噪声。 一般来说，PMOS器件比NMOS晶体管的 \(1/f\) 噪声小。
+
+
+
+% End Here
+
+\ifx\mainclass\undefined
+\end{document}
+\fi 

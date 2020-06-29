@@ -1,0 +1,199 @@
+\ifx\mainclass\undefined
+\documentclass[cn,11pt,chinese,black,simple]{../elegantbook}
+\usepackage{array}
+\newcommand{\ccr}[1]{\makecell{{\color{#1}\rule{1cm}{1cm}}}}
+\input{../needed.tex}
+\begin{document}
+\fi 
+
+% Start Here
+\chapter{差动放大器}
+
+
+
+\section{基本概念}
+
+\textbf{共模电平}：差动信号的中间电平。
+
+\section{直流分析}
+
+\subsection{定量电压电流分析}
+
+处于饱和区的晶体管，从输入端到电流源的过驱动电压满足：
+
+\[V_{override} = V_{GS} - V_{TH} = \sqrt{\frac{2 I_D}{\mu_n C_{ox}(W/L)}}\]
+
+并且我们还要建立两路输入电压的不同引起的输出电压不同，为此，从电流入手：
+
+\[V_{in1}-V_{in2} = \sqrt{\frac{2 I_{D1}}{\mu_n C_{ox} (W/L)}} - \sqrt{\frac{2 I_{D2}}{\mu_n C_{ox} (W/L)}}\]
+
+最终化简为
+
+\begin{equation}\label{eq:diffvdiifi}
+    \begin{aligned}
+        \Delta I_D &= I_{D1} - I_{D2} \\
+        &= \frac{1}{2} \mu_n C_{ox} \frac{W}{L} (V_{in1} - V_{in2}) \sqrt{\frac{4 I_{SS}}{\mu_n C_{ox} (W/L)} - (V_{in1} - V_{in2})^2}\\
+        &= \frac{1}{2} \mu_n C_{ox} \frac{W}{L} (\Delta V_{in}) \sqrt{\frac{4 I_{SS}}{\mu_n C_{ox} (W/L)} - (\Delta V_{in})^2}
+    \end{aligned}
+\end{equation}
+
+
+\qfig{f4.png}{理想电流源的基本差动对}
+
+\subsection{差动信号增益}
+
+根据式\ref{eq:diffvdiifi}求斜率表达式
+
+\begin{equation}
+    \begin{aligned}
+        G_m = \frac{\pp \Delta I_D}{\pp \Delta V_{in}} = \frac{1}{2} \mu_n C_{ox} \frac{W}{L} \displaystyle\frac{\displaystyle\frac{4 I_{SS}}{\mu_n C_{ox} W/L} - 2\Delta V_{in}^2}{\sqrt{\displaystyle\frac{4 I_{SS}}{\mu_n C_{ox} W/L}-\Delta V_{in}^2}}
+    \end{aligned}
+\end{equation}
+
+
+根据其图像，差动信号在差动信号直流电平相等时，可以得到最大的小信号增益。在非理想电流源中，直流电位差别较大的时候，存在电流完全被一路抽取的情况。
+
+并且在 \(\Delta V_{in} = \sqrt{2 I_{SS} / (\mu_n C_{ox} W/L)}\) 增益下降为 \(0\) 。
+
+
+\subsection{共模电平选取}
+
+差动放大器的共模电平应保证放大管以及电流源均工作在饱和区，以获得最大且最稳定的小信号增益。
+
+\qfig{f5.png}{非理想电流源的基本差动对}
+
+\section{交流分析}
+
+\subsection{叠加原理}
+
+差动输入分别考虑为两个，通过线性电路狄叠加原理分别得到 \((V_{o1}-V_{o2}) = K V_{in1}\) ， \((V_{o2}-V_{o1}) = K V_{in2} = K (- V_{in1})\) 之后
+
+\[\frac{(V_{o1}-V_{o2})_{total}}{V_{in1}-V_{in2}} = K \]
+
+\subsection{半边电路法}
+
+电路完全对称，D1和D2代表任何三端有源器件。 假设 \(Vin1\) 和
+\(Vin2\) 差动变化，如果电路保持线性，则 \(V_p\) 不变，在交流通路中接地。
+
+\qfig{f13.png}{辅助定理}
+
+
+
+
+\section{共模分析}
+
+研究共模 (Common Mode) 响应的原因：
+实际电路中共模信号的位置会影响整个电路的静态工作点，进而改变小信号的增益与电路摆幅。并且电路往往不会完全对称，共模输入也会自然地导致差动地输出。
+
+差动对的共模响应取决于\textbf{尾电流源的输出阻抗}和\textbf{电路的不对称性}，并表现为两个方面的影响： 对称电路的输出共模电平变化以及输入
+共模电压变化在输出端产生差模分量。在模拟电路
+中， 后者的影响要比前者严重得多。有鉴于此， 研究
+共模响应时通常应当考虑不匹配。
+
+响应可以通过 MOS 管并联求解，并联视为宽度加倍。增益为
+
+\[A_{v,CM} = - \frac{R_D/2}{1/(2 g_m)+R_SS}\]
+
+\qfig{f7.png}{共模响应- MOS 并联}
+
+\section{失配分析}
+
+电路的不对称既来自负载电阻也来自输入晶体管，通常后者产生的失配要大
+得多。
+
+仅考虑晶体管失配，即\(g_{m1}\) ，\(g_{m2}\) 不相等。即\textbf{共模输入}由于电路不对称引起的\textbf{差动输出}，增益为
+
+\[A_{CM-DM} = \frac{\Delta V_X - \Delta V_Y}{\Delta V_{in,CM}} = - \frac{(g_{m1}-g_{m2})R_D}{1+(g_{m1}+g_{m2})R_{SS}}\]
+
+
+\qfig{f8.png}{失配分析的电路样例}
+
+\section{共模响应总结}
+
+无失配情况：尾电流源的有限阻抗引起共模电平变化。
+
+失配情况：共模信号会产生差动输出。
+
+高频情况：尾电流源的寄生电容阻抗的降低会引起共模电平的剧烈变化。
+
+\qfig{f9.png}{高频情况下尾电流源的寄生电容}
+
+\section{差动放大器评估}
+
+为了合理地比较各种差动电路， 由共模变化而产生的不期望的差动成分必须用放大后所
+需要的差动输出归一化。定义共模抑制比 CMRR (common-mode rejection ratio) ，可以理解为放大效果被失配稀释的程度。
+
+\[CMRR = \left|\frac{A_{DM}}{A_{CM-DM}} \right|\]
+
+
+
+
+\section{典型差动对}
+
+\subsection{带源极负反馈的差动对}
+
+增加了线性放大区输入的范围，但是源极负载消耗电压裕度，摆幅减小。
+
+\qfig{f6.png}{带源极负反馈的差动对}
+
+\subsection{带有负载的差动对}
+
+差动对的负载往往是二极管接法或电流源接法的 MOS 管。
+
+二极管接法：
+
+\begin{equation*}
+    \begin{aligned}
+        A_v &= - g_{m1} \left(r_{o1} \| r_{o3} \| \frac{1}{g_{m3}}\right)
+        \\& \approx - \frac{g_{m1}}{g_{m3}} = - \sqrt{\frac{\mu_n(W/L)_N}{\mu_p(W/L)_P}}
+    \end{aligned}
+\end{equation*}
+
+电流源接法：
+
+\[A_v = -g_{m,N} (r_{o,N} \| r_{o,P}) \]
+
+\qfig{f10.png}{二极管接法的差动对负载}
+
+
+\qfig{f11.png}{电流源接法的差动对负载}
+
+
+\subsection{一道典型增益的求解}
+
+在这里，可以将横跨电阻 \(R_1\) 看作是两个 \( 0.5R_1\) 的串联，便于将其使用半边电路对称处理。在直流条件下，两个 \( 0.5R_1\) 连接点的电平是固定的，因此在半边电路小信号中， 将之当作大小为 \( 0.5R_1\) 的接地电阻即可。
+
+由辅助定理，尾电流源接地。
+
+
+\qfig{f12.png}{带有横跨电阻的差动放大器}
+
+\subsection{一道典型共模抑制比的求解}
+
+求解本题目的方法具有普适性。
+
+\begin{exercise}
+    Due to a manufacturing defect, a large parasitic resistance has appeared between the drain and source terminals of M1. Assuming \(\lambda\) = \(\gamma\) = 0, calculate the small-signal gain, common-mode gain, and CMRR. 
+    \qfig{f14}{题图}
+\end{exercise}
+
+\begin{solution}
+    设电流源的漏极电平为 \(V_X\) ，输出端两端分别为 \(V_{out,1}\), \(V_{out,2}\) 。
+
+    由于无沟道调制与体效应，小信号中总电流为 \(0\)，即输出端两端反向，那么 \(V_{out,1} = - V_{out,2} = \displaystyle\frac{1}{2} V_o\) 。
+
+    求解 \(A_{CM-DM}\) 时， 设\(V_{in,1} = V_{in,2} = V_{in}\)。
+
+    求解 \(A_{DM}\) 时，设\(V_{in,1} = - V_{in,2} = \displaystyle \frac{1}{2} V_{in}\)。
+
+    联立两条支路的基尔霍夫方程即可，不再赘述。
+\end{solution}
+
+
+
+
+% End Here
+
+\ifx\mainclass\undefined
+\end{document}
+\fi 

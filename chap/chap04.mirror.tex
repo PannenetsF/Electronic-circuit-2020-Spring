@@ -1,0 +1,190 @@
+\ifx\mainclass\undefined
+\documentclass[cn,11pt,chinese,black,simple]{../elegantbook}
+\usepackage{array}
+\input{../needed.tex}
+\begin{document}
+\fi 
+
+% Start Here
+
+\chapter{无源与有源电流镜}
+
+电流镜在模拟电路中可以作为电路的偏置单元提供标准的电流，也可以通过有源负载形成所谓的五管 OTA ，对差动信号进行处理，转换为单端信号。
+
+\section{基本电流镜}
+
+以一个通过电阻分压调控的电流源为例，其 \(\mu_n , V_{TH}\) 等受温度影响很大，并且过驱动电压的小波动就会引起很大的电流输出偏差。因此使用电压控制无法获得准确的电流偏置。
+
+\qfig{f15.png}{电阻分压电流源}
+
+因此模拟电路中采用的普遍方法是对\textbf{基准电流}进行复制，将基准电流偏置的 MOS 管的电压进行复制，即可获得“镜像”，也就是电流镜。
+
+\qfig{f16.png}{基本电流镜}
+
+对于基本电流镜满足
+
+\begin{equation}\label{eq:c4:1}
+    \begin{aligned}
+        I_{REF} &= \frac{1}{2} \mu_n C_{OX} \left(\frac{W}{L}\right)_1(V_{GS} - V_{TH})^2 \\
+        I_{out} &= \frac{1}{2} \mu_n C_{OX} \left(\frac{W}{L}\right)_2(V_{GS} - V_{TH})^2 \\
+        \frac{I_{out}}{I_{REF}} &= \frac{(W/L)_2}{(W/L)_1}
+    \end{aligned}
+\end{equation}
+
+
+这样电流的复制就不受工艺与温度的影响，仅由器件尺寸的比值决定。需要注意的是，尺寸的调节不可以调节沟道长度， 因为源漏区的扩散效应影响 \(L\) ，需要通过晶体管并联的方式调节栅极的宽度。
+
+电流镜作为直流偏置的器件可以处理大信号，同时也可以处理小信号。
+
+\section{共源共栅电流镜}
+
+到目前为止， 我们有关电流镜的讨论中， 都忽略了沟道长
+度调制。在实际中， 这一效应使得镜像的电流产生了极大的误差， 尤其是当使用最小长度晶体管以便通过减小宽度来减小电流源输出电容时。
+
+由图~\ref{eq:c4:1}加入沟道调制效应之后
+
+\begin{equation}\label{eq:c4:2}
+    \begin{aligned}
+        I_{REF} &= \frac{1}{2} \mu_n C_{OX} \left(\frac{W}{L}\right)_1(V_{GS} - V_{TH})^2 (1 + \lambda V_{DS1}) \\
+        I_{out} &= \frac{1}{2} \mu_n C_{OX} \left(\frac{W}{L}\right)_2(V_{GS} - V_{TH})^2 (1 + \lambda V_{DS2})  \\
+        \frac{I_{out}}{I_{REF}} &= \frac{(W/L)_2 (1 + \lambda V_{DS2})}{(W/L)_1 (1 + \lambda V_{DS1})} 
+    \end{aligned}
+\end{equation}
+
+为了减少沟道调制效应的影响，采用共源共栅电流源，在保持\(V_X \approx V_Y\)的前提下，两路电流可以认为满足电流镜的条件，在体效应情况下仍成立，尺寸需要满足
+
+\[\frac{(W/L)_3}{(W/L)_0} = \frac{(W/L)_2}{(W/L)_0}\]
+
+值得注意的是精度的提升的代价是 \(M_3\) 的一个过驱动电压，P 点的最低电平提高了。并且底部晶体管受到 \(V_P\) 的影响被屏蔽了，\(\Delta V_Y\) 满足
+
+\[\Delta V_Y = \Delta V_P \frac{1}{(g_{m3} + g_{mb3}) r_{o3}}\]
+
+\qfig{f29.png}{共源共栅电流源}
+
+\qfig{f17.png}{共源共栅电流镜}
+
+
+\section{低压共源共栅电流镜}
+
+\qfig{f18.png}{低压共源共栅电流镜}
+
+为了保证 \(M_0, M_1\) 工作在饱和区。
+
+\[M_0: V_b - V_{TH0} \leq V_X\]
+
+\[M_1: V_{GS1} - V_{TH1} \leq V_A = V_b - V_{GS0} \]
+
+联立得到
+
+\[V_{GS0} - V_{TH0} \leq V_{TH1}\]
+
+实际上就是保证 \(M_0\) 的过驱动电压远低于 \(V_{TH1}\)，实际使用时调节 \(V_b\) 使得\(M_1, M_2\) 工作在线性区边缘可以消耗最小的电压裕度。
+
+通过两种方式确定偏置的 \(V_b\)
+
+\begin{equation}
+    \begin{aligned}
+        (a) V_b &= V_{GS5} + V_{GS6) - R_b I_1} \\
+        (b) V_b &= V_{GS6} - V_{TH6} + V_{GS7}
+    \end{aligned}
+\end{equation}
+
+\qfig{f19.png}{两种电压偏置}
+
+
+\section{五管 OTA (Operational Transconductance Amplifier) }
+
+五管 OTA （运算跨导放大器）是指的有源电流镜做负载的差动对，可以将差动信号转换为单端输出。
+
+\subsection{无源电流镜负载}
+
+\qfig{f20.png}{无源电流镜负载}
+
+按照辅助定理求解，输出短路时电路完全对称。
+
+\[G_m =  \frac{g_m}{2}\] 
+\[R_{out} = r_{o4} \| (r_{o1} + r_{o2})\]
+
+因此
+
+\[\left|A_v\right| = \frac{g_m}{2} \left(2 r_{o1} \| r_[o4]\right)\]
+
+通过分析发现，\(M_1\) 管子的电流直接流向了交流地，没有起到任何放大作用，被浪费，因此为了利用这股电流增加增益，使用五管 OTA 。
+
+\subsection{有源电流镜负载}
+
+\qfig{f21.png}{有源电流镜负载}
+
+\subsubsection{大信号分析}
+
+输出电平与输入电平差值的关系可以看出大信号在近似共模时可以获得高增益。输出应保证\(M_2\) 饱和， 那么 \[V_{OUT} \geq V_{in,CM} - V_{TH}\] ，摆幅与输入共模电平直接相关。
+
+\qfig{f22.png}{输出电平与输入电平差值的关系}
+
+\subsubsection{小信号分析}
+
+严格求解不可以使用半边电路法，因为电路不完全对称，\(F, X\) 摆幅差异很大，\(P\) 不能视为虚地。
+
+\qfig{f23.png}{OTA 的不对称摆幅}
+
+但是在实际近似求解\textbf{跨导}时，可以近似。
+
+由于 \(r_{o1} \gg \left[(1/g_{m3}) \| r_{o3}\right]\) ，\(r_{o1}\) 几乎没有电流经过，可以视为断路，而由电路的对称性知道，漏极此时接地，那么 \(P\) 此时必定接地。
+
+\qfig{f24.png}{等效跨导}
+
+此时 \(M_4\) 复制了 \(M+3\) 的电流 
+\[I_{out} = - I_3 + I_2 = -g_{m1} V_{in}\]
+
+
+\qfig{f25.png}{等效输出电阻}
+ 
+求解输出电阻，此时只有 \(M_4\) 为受控管子，并且受控线上没有电流。
+
+\[R_{out} = \left[(2 r_{o1,2}) + (\frac{1}{g_{m3}} \| r_{o3} ) \right] \| \dfrac{\dfrac{1}{g_{m3}} \| r_{o3}}{(2 r_{o1,2}) + (\frac{1}{g_{m3}} \| r_{o3} ) } g_{m_4} \| r_{o4}   \] 
+
+近似表示为
+\[R_{out} \approx r_{o2} \| r_{o4}\]
+
+那么 \[ |A_v| =  g_{m1} (r_{o1} \| r_{o4}) \frac{2 g_{m4} r_{o4} + 1}{2 (g_{m4} r_{o4} + 1)} \approx g_{m1} (r_{o1} \| r_{o4}) \]
+
+\qfig{f26.png}{等效电路}
+
+\subsection{OTA 评估}
+
+OTA 的电压裕度消耗较大，可以使用电流抽取方式使得漏极电位提高。
+
+\qfig{f27.png}{抽取电流设置}
+
+共模增益的简化求解：\[A_{CM} \approx - \frac{\dfrac{1}{}2 g_{m3,4} || \dfrac{r_{o3,4}}{2}}{\dfrac{1}{2 g_{m1,2} +R_{SS} }} = -\frac{1}{1 + 2 g_{m1,2} R_{SS}} \frac{g_{m1,2}}{g_{m3,4}}\]
+
+\qfig{f28.png}{简化的共模电路}
+
+那么共模抑制比为 
+
+\[CMRR = \abs{\frac{A_{DM}}{A_{CM}}} = g_{m3,4} (1 + 2 g_{m1,2} R_{SS})(r_{o1,2} || r_{o3,4})\]
+
+即使电路无失配，OTA也存在有限的共模抑制比，这是其缺点。
+
+五管OTA的非差分输出的结构导致电源噪声抑制能力较差， \(V_F\)几乎以单位增益
+随 \(V_{DD}\)变化。
+
+\section{一道典型例题}
+
+题目求解电流源的漏极电压变化引起的电流变化，往往是通过设出未知数联立一侧的电流进行求解。
+
+通过标准电流等条件求解出左侧各点的电势，设 B 点的电压由于栅极变化 \(\Delta V\) 
+
+\[I_{out} = \frac{1}{2} k_n (W/L)_2 (V_x - V_{TH})^2 (1 + \lambda (V_B + \Delta V)) \]
+
+\[I_{out} = \frac{1}{2} k_n (W/L)_3 (V_b - (V_B + \Delta V) - V_{TH})^2 (1 + \lambda (V_P + \Delta V_P - (V_B) + \Delta V))\]
+
+仅有 \(\Delta V\) 一个未知数，完成求解。
+
+\qfig{f30.png}{共源共栅电流源做负载}
+
+% End Here
+
+\ifx\mainclass\undefined
+\end{document}
+\fi 

@@ -1,0 +1,416 @@
+\ifx\mainclass\undefined
+\documentclass[cn,11pt,chinese,black,simple]{../elegantbook}
+\usepackage{array}
+\input{../needed.tex}
+\begin{document}
+\fi 
+
+% Start Here
+\chapter{负反馈}
+
+\section{负反馈系统}
+
+\subsection{系统组成}
+
+一个典型的负反馈系统作用时使净输入量减小，或者使输出量
+的变化减弱，通常包括以下部分，
+
+
+\begin{enumerate}
+    \item \(H(s)\) ：前馈网络，通常是一个放大器。
+    \item \(G(s)\) ：反馈网络，通常是一个与频率无关的函数。
+    \item \(X(s) - G(s) Y(s)\) ：反馈误差
+    \item \(\dfrac{Y(s)}{X(s)}\) ：闭环传输函数
+    \item \(H(s)\) ：开环传输函数
+\end{enumerate}
+
+满足方程
+
+\[\begin{array}{c}
+    \begin{aligned}
+    Y(s)&=H(s)[X(s)-G(s) Y(s)] \\
+    \frac{Y(s)}{X(s)}&=\frac{H(s)}{1+G(s) H(s)}
+    \end{aligned}
+\end{array}\]
+
+\qfig{f62.png}{典型负反馈系统-复频域}
+
+设计时通常满足以下原则 
+\begin{itemize}
+    \item 反馈网络 \(G(s)\) 与频率无关，不移相
+    \item 深度负反馈 \begin{itemize}
+        \item 反馈误差也就是前馈网络的输入极小，可以认为虚地
+        \item \(X(s)\) 与 \(Y(s)\) 的比例几乎只与反馈有关
+        \item \(G(s) H(s) \gg 1\) 
+    \end{itemize}
+\end{itemize}
+
+以简单的放大器构成负反馈系统，那么有
+
+\qfig{f63.png}{简单负反馈放大器}
+
+参照以上的讨论，有
+
+\begin{enumerate}
+    \item \(A\) ： 开环增益
+    \item \(\beta\) ：反馈系数
+    \item \(\beta A\) ：环路增益
+    \item \(\dfrac{Y}{X}\) ：闭环增益
+\end{enumerate}
+
+并且满足 \[\dfrac{Y}{X} = \dfrac{A}{1 + \beta A}\]
+
+\subsection{负反馈系统的性质}
+
+\subsubsection{稳定增益}
+
+对于深度负反馈，有 \(\beta A \gg 1\) ，那么
+
+\[\begin{array}{c}
+    \frac{Y}{X}=\frac{A}{1+\beta A}=\frac{1}{\beta}\left(1-\frac{1}{1+\beta A}\right) \approx \frac{1}{\beta}\left(1-\frac{1}{\beta A}\right) \approx \frac{1}{\beta} \\
+\end{array}\]
+
+闭环增益 \(\dfrac{Y}{X}\) 对于开环增益 \(A\) 的变化敏感程度下降，并且 \(\beta\) 越大增益越稳定，但是同时增益也在减小。
+实际中的增益很容易随工艺、温度等发生变化，增益不精确也不稳定，通过负反馈可以实现对增益更精确的控制。
+
+\subsubsection{改变终端阻抗}
+
+开环输入阻抗，即无反馈时的输入阻抗。闭环输入阻抗，即有反馈时的输入阻抗。在之后的小节进行讨论。
+
+
+
+\subsubsection{改变带宽}
+
+对于单极点的前馈函数 \(A(s) = \dfrac{A_0}{1 + \dfrac{s}{\omega_0}}\)  增加反馈得到
+
+\[\dfrac{Y(s)}{X(s)} = \dfrac{A(s)}{1 + \beta A(s)} = \dfrac{\dfrac{A_0}{1 + \beta A_0}}{1 + \dfrac{s}{(1+\beta A_0)\omega_0}}\] 
+
+主极点得到改善，但是增益带宽积不变。
+
+\subsubsection{改善线性度}
+
+负反馈放大器的增益稳定性被改善，线性度较好，代价是增益的减小。
+
+\subsubsection{环路增益的求解}
+
+对输入置零，断开环路在反馈点增加测试信号，读取输出端信号，计算与测试信号的比值，取反便可得到环路增益 (loop gain) 。
+
+\qfig{f64.png}{环路增益的求解}
+
+\[\begin{aligned}
+    V_t \beta (-1) A &= V_F \\
+    \dfrac{V_F}{V_t} = -\beta A
+\end{aligned}\]
+
+\section{放大器}
+
+\subsection{基本放大器}
+
+有这样四种基本的放大器，基于这些放大器逐步开展反馈机制的讨论。
+
+\qfig{f65.png}{基本放大器类型}
+
+
+\begin{longtable}{lllll}
+    \caption{基本放大器的阻抗对比} \\
+    \toprule \textbf{放大器类型} & \textbf{电压放大器} & \textbf{跨阻放大器} & \textbf{跨导放大器} & \textbf{电流放大器} \\
+    \midrule
+    \endfirsthead
+    
+    \toprule \textbf{放大器类型} & \textbf{电压放大器} & \textbf{跨阻放大器} & \textbf{跨导放大器} & \textbf{电流放大器} \\
+    \midrule
+    \endhead
+
+    \hline
+    \multicolumn{5}{c}{见下页}\\   
+    \bottomrule
+    \endfoot
+
+    \bottomrule
+    \endlastfoot
+
+    \textbf{输入阻抗}  & 高              & 低              & 高              & 低              \\
+    \textbf{输出阻抗}  & 低              & 低              & 高              & 高              \\
+    
+\end{longtable}
+
+\qfig{f66.png}{基本放大器的单 MOS 实现}
+
+\qfig{f67.png}{基本放大器的改进实现}
+
+\subsection{检测与反馈机制}
+
+对控制机制进行命名定义：（输出端电学量）-（输入端电学量），“XX—电压反馈”的输入信号必须是电压，
+“XX—电流反馈”的输入信号必须是电流。有四种基本反馈机制 
+\begin{itemize}
+    \item 电压 - 电压反馈
+    \item 电压 - 电流反馈
+    \item 电流 - 电流反馈
+    \item 电流 - 电压反馈
+\end{itemize}
+
+图~\ref{fig:ch07:base-feedback}列出了几种基本的反馈方式逐一进行说明：
+
+\begin{itemize}
+    \item (a) 电压通过电阻分压反馈到输入电压
+    \item (b)(c) 电流通过电阻分压反馈到输入电压
+    \item (d) 电压通过电阻反馈到输入电压，并且通过差动对完成电压减法
+    \item (e)(f) 电压通过电阻分压反馈到输入电压，通过栅源压降完成减法
+    \item (g)(h) 电流通过并联反馈到输入电流
+\end{itemize}
+
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=0.8\textwidth]{f68.png}
+    \caption{基本反馈方式}
+    \label{fig:ch07:base-feedback}
+\end{figure}
+
+在输出端检测电压应使用并联，检测电流使用串联。
+
+可以注意到这样的规律：电压负反馈的输入量与反馈量在两个节点，
+电流负反馈的输入量与反馈量在同一个节点。这个规律可以用来确定反馈类型。
+
+\subsubsection{电压-电压反馈}
+
+前馈网络相当于一个差动输入单端输出的放大器，反馈网络是一个分压器，与输出电压并联分压，反馈串联到输入。理想的反馈网络有无穷大的输入阻抗，接受全部电压，具有零输出阻抗，电压完全反馈。
+
+\qfig{f69.png}{电压-电压反馈}
+
+\paragraph{输出阻抗}
+
+负反馈系统希望得到线性性良好的输入输出关系，当放大器带载时，逐渐减小其阻值。在开环结构中,输出将按 \(R_{ L } /\left(R_{ L }+R_{ out }\right)\) 比例下降。在反馈系统 中,即使 \(R_{ L }\) 减小, \(V_{\text {out }}\) 也始终是 \(V_{\text {ia }}\) 的合理线性复制。也就是说,只要环路增益保持远大于 \(1\) 则增益与负载无关。
+
+\qfig{f70.png}{带载放大器}
+
+检测反馈网络的输出电阻，理想反馈网络的输入电阻无穷大，所以反馈网络返回的电流忽略不计。
+
+\qfig{f71.png}{输出阻抗检测}
+
+可以得到
+
+\[\frac{V_{X}}{I_{X}}=\frac{R_{\text {out }}}{1+\beta A_{0}}\]
+
+可以看出输出阻抗和增益 \(\dfrac{1}{\beta}\) 成比例减小。
+
+整体上，输出阻抗被减小，更接近理想
+电压源输出。
+输出电压更稳定，不易受负载
+电阻影响。
+
+\paragraph{输入阻抗}
+
+\qfig{f72.png}{输入阻抗示意}
+
+\qfig{f73.png}{输入阻抗检测}
+
+进行求解
+
+\[\begin{array}{l}
+    V_{e}= V _{X}-V_{F}=V_{X}-\beta A_{0} I_{X} R_{i n} \\
+    I_{X} R_{i n}= V _{X}-\beta A_{0} I_{X} R_{i n} \\
+    \frac{V_{X}}{I_{X}}=R_{i n}\left(1+\beta A_{0}\right)
+\end{array}\]
+
+输入阻抗被增大，更接近理想电压放大器。
+
+\subsubsection{电流-电压反馈}
+
+反馈网络与前馈网络的输出量串联，与输入量串联。
+前馈网络必须加负载电阻，以产生电流。
+理想反馈网络具有零输入阻抗，将输出电流全部接收。
+理想反馈网络具有零输出阻抗，将反馈电压全部送到输入端。
+
+\qfig{f74.png}{电流-电压反馈}
+
+\paragraph{增益}
+
+闭环增益为 
+
+\[\begin{array}{l}
+    \frac{I_{o u t}}{V_{i n}}=\frac{G_{m}}{1+G_{m} R_{F}}
+\end{array}\]
+
+\qfig{f75.png}{开环增益检测}
+
+开环增益为 \[-\frac{I_{o u t}}{I_{t}}=G_{m} R_{F}\]
+
+\paragraph{输出阻抗}
+
+满足
+
+\[-R_{F} I_{X} G_{m}=I_{X}-\frac{V_{X}}{R_{O u t}} \quad \frac{V_{X}}{I_{X}}=R_{o u t}\left(1+G_{m} R_{F}\right)\]
+
+\qfig{f76.png}{输出阻抗检测}
+
+\paragraph{输入阻抗}
+
+输入阻抗被增大，更接近理想电压放大器。
+
+\[\begin{array}{l}
+    I_{X} R_{i n} G_{m}=I_{o u t} \\
+    V_{e}=V_{X}-G_{m} R_{F} I_{X} R_{i n} \\
+    \frac{V_{X}}{I_{X}}=R_{i n}\left(1+G_{m} R_{F}\right)
+\end{array}\]
+
+\qfig{f77.png}{输入阻抗检测}
+
+\subsubsection{电压-电流反馈}
+
+反馈网络与前馈网络的输出量并联，与输入量并联。
+理想反馈网络具有无穷大输入阻抗，将输出电压全部接收。
+理想反馈网络具有无穷大输出阻抗，将反馈电流全部送到输入端。
+
+\qfig{f78.png}{电压-电流反馈电路}
+
+增益为 
+\[\frac{V_{out}}{I_{in}} = \dfrac{R_0}{1 + g_{mF}} R_0\]
+
+\qfig{f79.png}{输入与输出阻抗}
+
+输入阻抗为
+
+\[\begin{aligned}
+    I_{F} &=I_{X}-\frac{V_{X}}{R_{i n}} \frac{V_{X} R_{0} g_{m F}}{R_{i n}}=I_{F} \\
+    \frac{V_{X}}{I_{X}} &=\frac{R_{i n}}{1+g_{m F} R_{0}}
+\end{aligned}\]
+
+输出阻抗为
+
+\[\begin{array}{c}
+    \begin{aligned}
+        I_{e}&=-I_{F}=-g_{m F} V_{X} \\
+        V_{M}&=-R_{0} g_{m F} V_{X} \\
+        I_{X}&=\frac{V_{X}-V_{M}}{R_{o u t}}=\frac{V_{X}+g_{m F} R_{0} V_{X}}{R_{o u t}} \\
+        \frac{V_{X}}{I_{X}}&=\frac{R_{o u t}}{1+g_{m F} R_{0}}
+    \end{aligned}
+\end{array}\]
+
+输入阻抗被减小，更接近理想电流放大器。输出阻抗被减小，更接近理想电压源输出。
+
+\subsubsection{电流电流反馈}
+
+\qfig{f80.png}{电流-电流反馈图}
+
+反馈网络与前馈网络的输出量串联，与输入量并联。
+理想反馈网络具有零输入阻抗和无穷大输出阻抗。
+
+闭环增益 \[\dfrac{A_1}{1 + \beta A_1}\] 。
+输入阻抗减小了\(1 + \beta A_1\)，情形类似于“电压—电流反馈”的输入阻抗。
+输出阻抗增大了\(1 + \beta A_1\)，情形类似于“电流—电压反馈”的输出阻抗。
+
+\subsection{负反馈系统的评估}
+
+
+\subsubsection{阻抗}
+
+负反馈总是使放大器的输入/输出阻抗变得更加理想。
+
+\begin{longtable}{lll}
+    \caption{反馈引起的阻抗变化} \\
+    \toprule \text { 反馈类型 } & \text { 输入阻抗 } & \text { 输出阻抗 } \\
+    \midrule
+    \endfirsthead
+    
+    \toprule\text { 反馈类型 } & \text { 输入阻抗 } & \text { 输出阻抗 } \\
+    \midrule
+    \endhead
+
+    \hline
+    \multicolumn{3}{c}{见下页}\\   
+    \bottomrule
+    \endfoot
+
+    \bottomrule
+    \endlastfoot
+    \text { 电压一电压反馈 } & \text { 增大 } & \text { 减小 } \\
+    \text { 电流一电压反馈 } & \text { 增大 } & \text { 增大 } \\
+    \text { 电压一电流反馈 } & \text { 减小 } & \text { 减小 } \\
+    \text { 电流一电流反馈 } & \text { 减小 } & \text { 增大 } \\
+\end{longtable}
+
+\subsubsection{噪声}
+
+
+负反馈没有消除前馈通路的噪声。实际中，反馈网络也会引入噪声，因此总的噪声性能更差。
+
+\qfig{f81.png}{负反馈对噪声的影响}
+
+
+\[\begin{array}{l}
+    \left(V_{\text {in }}-\beta V_{\text {out }}+V_{n}\right) A_{1}=V_{\text {out }} \\
+    V_{\text {out }}=\left(V_{\text {in }}+V_{n}\right) \frac{A_{1}}{1+\beta A_{1}}
+\end{array}\]
+
+\section{加载效应}
+
+
+反馈网络的输入电阻不是“无穷大”，开环增益被减小。
+前述理想模型下输出阻抗的计算也不适用。
+如果由电容反馈分压，则在低频下几乎不影响开环增益。这都被称为“加载效应”。
+反馈网络和前馈网络纠缠，难以清晰分割。反馈回路可能不唯一。
+
+\subsection{线性二端口网络模型与放大器}
+
+二端口网络用来描述线性电路，可以描述加载效应。
+过程为
+断开加载环路，计算开环增益。
+确定反馈系数，得出环路增益。
+这是一种近似（环路单向化假设），并非精确解。
+
+\qfig{f82.png}{二端口网络模型}
+
+\[\begin{array}{l}
+    V_{1}=Z_{11} I_{1}+Z_{12} I_{2} \\
+    V_{2}=Z_{21} I_{1}+Z_{22} I_{2} \\
+    \\
+    I_{1}=Y_{11} V_{1}+Y_{12} V_{2} \\
+    I_{2}=Y_{21} V_{1}+Y_{22} V_{2} \\
+    \\
+    V_{1}=H_{11} I_{1}+H_{12} V_{2} \\
+    I_{2}=H_{21} I_{1}+H_{22} V_{2} \\
+    \\
+    I_{1}=G_{11} V_{1}+G_{12} I_{2} \\
+    V_{2}=G_{21} V_{1}+G_{22} I_{2}
+\end{array}\]
+
+\subsection{电压-电压反馈加载效应}
+
+对于电压放大器而言，G模型更直观、更有物理意义。
+于普通的电压放大器，内部反馈\(G_{12}I_2\)被忽略，则\(G_{11}\)就是输入
+\textbf{导纳}，\(G_{22}\)就是输出\textbf{阻抗}，\(G_{21}\)就是开路电压增益。
+
+为简化计算，内部反馈被忽略，实现环路单向化近似。
+
+那么 \(G_{11} \rightarrow Z_{in}\)， \(G_{22} \rightarrow Z_{out}\) ， \(G_{21} \rightarrow A_0\)。若是 \(g_{11} = g_{22} = 0\) 则得到理想模型，没有加载效应。
+
+\qfig{f83.png}{二端口网络表示电压-电压反馈}
+
+进一步确定加载效应的参数，输出短接，可以获得 \(g_{22}\) ， 输入开路，可以获得 \(g_(11)\)，\(g_{21}\) 则是反馈网络的增益。
+
+\subsection{电流-电压反馈加载效应}
+
+前馈网络Y模型适用；
+反馈网络Z模型适用。
+
+\qfig{f84.png}{电流-电压反馈加载效应}
+
+\subsection{电压-电流反馈加载效应}
+
+前馈网络Z模型适用；
+反馈网络Y模型适用。
+
+\qfig{f85.png}{电压-电流反馈加载效应}
+
+\subsection{电流-电流反馈加载效应}
+
+前馈网络H模型适用；
+反馈网络H模型适用。
+
+\qfig{f86.png}{电流-电流反馈加载效应}
+
+% End Here
+
+\ifx\mainclass\undefined
+\end{document}
+\fi 

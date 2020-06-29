@@ -1,0 +1,428 @@
+\ifx\mainclass\undefined
+\documentclass[cn,11pt,chinese,black,simple]{../elegantbook}
+\usepackage{array}
+
+\input{../needed.tex}
+\begin{document}
+\fi 
+
+% Start Here
+\chapter{频率响应}
+
+本章研究的核心问题是放大器对不同频率的信号的放大效果，电容的存在使得增益等指标成为频率的函数，这就是\textbf{频率响应}。
+
+
+\qfig{f48.png}{MOS 管完整等效电路}
+
+\section{波特图}
+
+横轴使用对数刻度 \(\lg f\) 或者 \(\lg \omega\)，幅频纵轴为 \(20 \lg \abs{A_v} \) 单位为 \(dB\) ，相频纵轴仍为角度。并且曲线折线化，容忍误差。
+
+以低通电路为例，有
+
+\[\dot{U}_o = \frac{1 / (j \omega C)}{R + (1 + j \omega C)} U_i = \frac{1}{1 + j \omega R C} \dot{U}_i\]
+
+那么 \[\abs{A_v} = \sqrt{\dfrac{1}{1 + \omega^2R^2C^2}} = \sqrt{\dfrac{1}{1 + (f / f_p)^2}}\] 
+\[\varphi = -\arctan(\omega RC) = -\arctan(\dfrac{f}{f_p}) \] 
+
+折线化的来源 
+
+
+
+\begin{equation*}
+    20 \lg \abs{A_v} \approx \left\{
+    \begin{aligned}
+        0, &f \ll f_p\\
+        -20\lg \dfrac{f}{f_p}, &f \gg f_p
+    \end{aligned}
+    \right.
+\end{equation*}
+
+
+\begin{equation*}
+    -\arctan \frac{f}{f_p} \approx \left\{
+    \begin{aligned}
+        &\degr{0}, &f \ll 0.1 f_p\\
+        &\degr{-45} - \lg \frac{f}{f_p}, &0.1  f_p <f < 10 f_p\\
+        &\degr{-90}, &f \gg 10 f_p
+    \end{aligned}
+    \right.
+\end{equation*}
+
+波特图的方式幅频特性的横轴均用对数刻度，拓宽视野；纵轴用对数，将乘除运算换算为加减运算，方便处理级联等问题；误差较小，近似程度可以接受。
+
+本课程中采用拉普拉斯变换，需满足以下\textbf{标准形式}
+
+\[A_v = K \frac{1 + \dfrac{s}{\omega_z}}{\left(1 + \dfrac{s}{\omega_{p1}}\right)\left(1 + \dfrac{s}{\omega_{p2}}\right)}\]
+
+转化为实频域
+
+
+\[A_v = K \frac{1 + \dfrac{j \omega}{\omega_z}}{\left(1 + \dfrac{j \omega}{\omega_{p1}}\right)\left(1 + \dfrac{j \omega}{\omega_{p2}}\right)}\]
+
+之后转化为对数形式的加减法
+
+\[20 \lg \abs{A_v} = 20 \lg K + 20 \lg \sqrt{1 + \left(\dfrac{j \omega}{\omega_z}\right)^2} - 20 \lg \sqrt{1 + \left(\dfrac{j \omega}{\omega_{p1}}\right)^2} - 20 \lg \sqrt{1 + \left(\dfrac{j \omega}{\omega_{p2}}\right)^2}\] 
+
+\[\varphi = \arctan\dfrac{\omega}{\omega_z} - \arctan\dfrac{\omega}{\omega_{p1}} - \arctan\dfrac{\omega}{\omega_{p2}}  \]
+
+
+\begin{definition}[频响零极点]
+    定义以上的标准形式中的 \(\omega_z\) 为零点频率，\(\omega_p\) 为极点频率
+\end{definition}
+
+每经过一个极点，增益下降的速度增加 20 dB/10倍频，
+相位在\(\pm 10\)倍频的范围内下降。
+
+每经过一个零点，增益上升的速度增加 20 dB/10倍频，
+相位在\(\pm 10\)倍频的范围内上升 \(\degr{90}\) 。
+
+\section{密勒定理}
+
+\begin{theorem}[密勒定理]
+    如果一个电路可以完成如图~\ref{fig:ch5:1} 的变换，那么有
+    \[\frac{V_X-V_Y}{Z} = \frac{V_X}{Z_1} \Rightarrow Z_1 = \frac{Z}{1 - \dfrac{V_Y}{V_X}} = \frac{Z}{1 - A_v}\]
+
+    \[\frac{V_Y-V_X}{Z} = \frac{V_Y}{Z_2} \Rightarrow Z_2 = \frac{Z}{1 - \dfrac{V_X}{V_Y}} = \frac{Z}{1 - A_v^{-1}}\]
+\end{theorem}
+
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=0.6\textwidth]{f31.png}
+    \caption{密勒等效变换}
+    \label{fig:ch5:1}
+\end{figure}
+
+但是遗憾的是，密勒定理没有给出成立条件，在单信号通路时，通常不成立，阻抗与信号主通路并联时，通常成立。
+
+\qfig{f32.png}{阻抗与主信号通路并联}
+
+\section{密勒近似的评估}
+
+严格求解各个频率下的系统特性使代数式变得十分复杂。然而， 在许多情况下， 我们采用低频的放大性能便能深人了解
+电路的特性。密勒近似就是用低频的增益替代实际的增益，来近似了解电路的特性。实际上密勒近似的结果与实际存在一定的偏差，但是极大简化了运算过程。
+
+
+\section{结点与极点}
+
+放大器进行级联时，对于每一级的输入输出关系都有 
+
+\[V_{out} = V_{in} \frac{\dfrac{1}{sC}}{R + \dfrac{1}{sC}} A_v = \frac{A_v}{1 + R s C}V_{in} \]
+
+那么对整个放大器链有
+
+\[\frac{V_{out}}{V_{in}}(s) =  \frac{A_1}{1 + R_S s C_{in}} \frac{A_2}{1 + R_1 s C_N}  \frac{1}{1 + R_2 s C_P} \]
+
+那么可以说\textbf{一个结点贡献一个极点}，极点频率为 \(\dfrac{1}{RC}\)虽在存在耦合时计算会十分复杂且不满足这个结论，但是仍然可以进行一定的估算，并且极大简化问题。值得注意的是，在实际使用时每一级放大器后面跟随的是其输出电阻，而不一定需要保持串联的形式，常见的输出电阻如沟道电阻就是和输出并联的。
+
+
+
+\qfig{f33.png}{放大器的级联}
+
+\qfig{f34.png}{一种耦合的例子}
+
+
+\section{特征频率}
+
+MOS 管的特征频率指的是源极漏极接地时，输入电流等于输出电流时的频率。
+输入电流 \(I_{in} = I_G = \dfrac{V_{in}}{\dfrac{1}{s (C_{GS} + C_{GD})}}\) 。
+输出电流 \(I_{out} = g_m V_{in}\) 。
+
+解得 \[f_T = \frac{g_m}{2 \pi (C_{GS} + C_{GD})}\]
+
+\qfig{f35.png}{MOS 小信号电路}
+
+
+\section{共源级频响}
+
+\subsection{密勒近似}
+
+增益为 \(A_v = - g_m R_D\) 
+
+输入极点 \(\omega_{in} = \frac{1}{R_S [C_{GS} + (1 - A_v) C_{GD}]}\)
+
+输出极点 \(\omega_{out} = \frac{1}{R_D [C_{DB} + (1 - A_v^{-1}) C_{GD}]}\)
+
+估算传输函数 \[\frac{V_{out}}{V_{in}}(s) = \frac{-g_m R_D}{(1 + \dfrac{s}{\omega_{in}}) (1 + \dfrac{s}{\omega_{out}})}\]
+
+\qfig{f36.png}{共源级密勒近似}
+
+输入阻抗
+
+\[Z_{in} = \frac{1}{s C_{GS}} \| \frac{1/ (s C_{GD})}{1 + g_m R_D}\]
+
+\subsection{精确解}
+
+回路方程的解
+
+\[\frac{V_{out}}{V_{in}}(s) = \frac{(s C_{GD} - g_m)R_D}{R_S R_D \xi^2 + [R_S(1 + g_m R_D) C_{GD} + R_S C_{GS} +R_D(C_{GD} + C_{DB} )]s + 1}\]
+
+\[\xi = C_{DS} C_{GD} + C_{GS} C_{DB} + C_{GD} C_{DB}\]
+
+采用\textbf{主极点近似法}，当分母很复杂时，靠直觉假定，两个极点相距很远。
+
+分母改写为 
+
+\[D = (1 + \frac{s}{\omega_{p1}})(1 + \frac{s}{\omega_{p2}})\]
+
+极点间隔很大，一次项系数为 \(\dfrac{1}{\omega_{p1}}\) 。再通过二次项系数解出另一个极点。
+
+零点为 \(s_z = \dfrac{g_m}{C_{GD}}\)
+
+增益在高频区间（零点之后）有反弹 \(C_{GD}\) 提供前馈通路，传导高频信号到输出端。
+
+\qfig{f37.png}{共源级频响波特图}
+
+输入阻抗
+
+\[Z_{in} = \frac{1 + R_D (C_{GD} + C_{DB })s}{s C_{GD} (1 + g_m R_D + s C_{DB} R_D)} \| \frac{1}{s C_{GS}}\]
+
+
+
+\subsection{对比评估}
+
+估算无法估出零点，估算得到的极点也不准确。
+
+主极点：
+
+\[\omega_{p1} = \frac{1}{R_S(1 + g_m R_D) C_{GD} + R_S C_{GS} + R_D(C_{GD} + C_{DB})}\]
+
+\[\omega_{in} = \frac{1}{R_S(1 + g_m R_D) C_{GD} + R_S C_{GS}}\]
+
+只要 \( R_D(C_{GD} + C_{DB})\) 足够小，误差就很小。
+
+次极点
+
+\[\omega_{p2} = \frac{R_S(1 + g_m R_D)C_{GD} + R_S C_{DS} + R_D(C_{GD} + C_{DB})}{R_S R_D (C_{GS} C_{GD} + C_{GS} C_{DB} + C_{GD} C_{DB})}\]
+
+\[\omega_{out} = \frac{1}{R_D(C_{GD} + C_{DB})}\]
+
+只要 \(C_{GD}\) 够大，误差就很小。
+
+在低频情况下，输入阻抗无穷大，均符合预期。
+
+\section{源随器频响}
+
+\subsection{精确解}
+
+X点与Y点的相互作用极强，不宜用密勒近似。实际上，若 \(\lambda = \gamma = 0\)，则X到Y的增益为 \(1\)。 密勒近似出现分母为 \(0\) 的情况。
+
+\qfig{f38.png}{源随器等效电路}
+
+\[\frac{V_{out}}{V_{in}} = \frac{s C_{DS} + g_m}{R_S (C_L C_{DS} + C_L C_{GD} + C_{GS} C_{GD})s^2 + (g_m R_S C_{GD} + C_L + C_{GS}) s + g_m }\]
+
+主极点近似
+
+\[\omega_{p1} = \frac{g_m}{g_m R_S C_{GD} + C_L +C_{DS}}\]
+
+\[\omega_{p2} = \frac{1}{\omega_{p1}} \frac{g_m}{R_S (C_L C_{GS} + C_L C_{GD} + C_{GS} C_{GD})}\]
+
+若 \(R_S = 0\) 那么输出极点消失，主极点近似得到的是精确解。
+
+\[s_z = -\frac{-g_m}{C_{GS}}\]
+
+\subsection{输入阻抗}
+
+\[Z_{in} = (\frac{1}{s C_{DS}} + (1 + \frac{g_m}{s C_{GS}})\frac{1}{g_{mb} + s C_L}) \| \frac{1}{s C_{GD}} \]
+
+若 \(C_L = 0\) 且 \(g_{mb} = 0\) 那么 \(C_{DS}\)  被自举，输出端感受不到输入的变化，输入阻抗无穷大。
+
+\subsection{输出阻抗}
+
+\[Z_{out} = \frac{1 + s R_s C_{GS}}{g_m + s C_{GS}} \| \frac{1}{s (C_L + C_{SB}) } = R_2 + R_1 \| (s L)\]
+
+（仅第一部分）低频近似为 \(\frac{1}{g_m}\) 
+
+（仅第一部分）高频近似为 \(R_S\)
+
+其中  \(R_2 = \dfrac{1}{g_m}\) \(R_1 + R_2 = R_S\)
+
+\[L = \frac{C_{GS}}{g_m} (R_S - \frac{1}{g_m})\]
+
+
+在较高频率下，呈现负电阻效应。输出阻抗包含电
+感成分。
+
+\section{共栅级频响}
+
+\subsection{无沟道调制效应}
+
+此时晶体管两端无阻抗耦合，无需使用密勒定理。
+
+\[\omega_{in} = \dfrac{1}{C_S (R_S \| \dfrac{1}{g_m + g_{mb}})}\]
+
+\[\omega_{out} = \frac{1}{C_D R_D}\]
+
+增益为 
+
+\[\frac{V_{out}}{V_{in}}(s) = \frac{(g_m + g_{mb}) R_D}{1 + (g_m + g_{mb} R_S)} \dfrac{1}{(1 + \dfrac{s}{\omega_{in}}) (1 + \dfrac{s}{\omega_{out}})} \]
+
+电容无密勒乘积项，可达到宽带。输入阻抗较低，级联时，容易引起电压信号损失。
+
+输入阻抗 
+\[Z_{in} = R_S + (\frac{1}{g_m +g_{mb}}) \| \frac{1}{s C_s}\]
+
+\qfig{f39.png}{共栅级等效电路 \(\lambda = 0\)}
+
+\subsection{沟道调制效应}
+
+为简化计算，负载电阻用电流源代替。
+
+\[\frac{V_{out}}{V_{in}} = \frac{1 + g_m r_o}{r_o C_L C_{in} R_s s^2 + [r_o C_l + R_S C_{in} + R_S C_L (1 + g_m r_o)]s + 1}\]
+
+\[Z_{in} =  R_S +  \frac{1/(s C_L) + r_o}{1 + g_m r_o} \| \frac{1}{s C_{in}}\]
+
+输入阻抗较低，且随频率升高而降低。
+
+\qfig{f40.png}{共栅级等效电路 \(\lambda \neq 0\)}
+
+\subsection{栅极电阻}
+
+从源极看过去的阻抗为 \[Z = \frac{1 + s C_{GS}R_G}{g_m + s C_{GS}}\]
+
+易知 \(I_{out}\) 和右侧的电流成正比，那么存在一个系数 \(\dfrac{Z}{Z + R_s}\)
+
+那么 \[\omega_p = \frac{1+ g_m R_S}{(R_G + R_S)C_{GS}}\]
+
+为获得宽带，应减小栅极电阻。
+
+\qfig{f41.png}{共栅级等效电路 栅极电阻)}
+
+\section{共源共栅级频响}
+
+\subsection{极点}
+
+输入的密勒电容是 \[C_X = (1 + \frac{g_{m1}}{g_{m2} + g_{mb2}})C_{GD1} + C_{DB1} + C_{SB2} + C_{GS2}\]
+
+那么 \(A\) 节点 \[\omega_{p,A} = \frac{1}{R_S\left[C_{GS1}+(1 + \dfrac{g_{m1}}{g_{m2} + g_{mb2}})C_{GD1}\right]}\]
+
+\(X\) 节点
+
+\[\omega_{p.X} = \frac{g_{m2} + g_{mb2}}{2 C_{GD1} + C_{DB1} + C_{SB2} + C_{GS2}}\]
+
+
+\(Y\) 节点无密勒乘积项
+
+\[\omega_{p,Y} = \frac{1}{R_D (C_{DB2} + C_L + C_{GD2})}\]
+
+一般情况下选取 \(\omega_{p,X}\) 离原点最远。
+
+\qfig{f42.png}{共源共栅级等效电路}
+
+\subsection{简化模型：电流源负载}
+
+\[\frac{V_{out}}{I_{in}} = -\frac{1 + g_{m2} r_{o2}}{s C_X} \frac{1}{1 + (1 + g_{m2} r_{o2} ) \dfrac{C_Y}{C_X}+ s C_Y r_{o2} } \approx - \frac{g_[m2]}{s C_X} \frac{1}{g_{m2} \dfrac{C_Y}{C_X} + s C_Y}  \]
+
+那么结点 \(X\) 的极点为 \(\dfrac{g_m2}{C_X}\) 与之前的结果一致。
+
+暂时忽略 \(C_Y\) ，
+输出阻抗为 \[Z_{out} = r_{o2} + (1 + g_{m2} r_{02}) \left(r_{o1} \| \dfrac{1}{s C_X}\right)\]
+
+在高频时，输出阻抗会下降，即使忽略 \(C_Y\) 。
+
+
+\qfig{f43.png}{简化模型}
+
+\section{差动对频响}
+
+对于差分信号，其频率响应与共源放大器一致（半边电路法）
+
+\[V_{DM-OUT}(s) = \frac{V_{in}(s)}{2} H(s) - \left[-\frac{V_{in}(s)}{2}\right] H(s) = V_{in} (s) H(s)\]
+
+\qfig{f44.png}{差动对等效电路}
+
+共模增益带入之前的增益即可 
+
+\begin{equation*}
+    \begin{aligned}
+        A_{CM-DM} &= \frac{\Delta g_m (R_D \| \dfrac{1}{s C_L}) }{1 + (g_{m1} + g_{m2})\left(r_{o3} \| \dfrac{1}{s C_P}\right)} \\
+        &= \frac{\Delta g_m R_D}{1 + (g_{m1} + g_{m2})r_{o3}} \frac{1 + s C_P r_{o3}}{(1 + s R_D C_L)\left[1 + s \dfrac{C_P r_{o3}}{1 + (g_{m1} + g_{m2})r_{o3}}\right]}
+    \end{aligned}
+\end{equation*}
+
+共模抑制比同样带入
+
+\begin{equation*}
+    \begin{aligned}
+        CMRR &= \frac{g_{m1} + g_{m2} + 4 g_{m1} g_{m2} (r_{o3} \| \dfrac{1}{s C_P})}{2 \Delta g_m} \\
+        &\approx \frac{g_m}{\Delta g_m} \frac{1 + 2 g_m r_{o3} + s C_P r_{o3}}{1 + s C_P r_[o3]} \\
+        &\approx \frac{2 g_m^2 r_{o3}}{\Delta g_m } \frac{1 + s \dfrac{C_P}{2 g_m}}{1 + s C_[ r_{o3}]} 
+    \end{aligned}
+\end{equation*}
+
+共模抑制比在高频下降，模抑制比的零点实际是 \(A_{Dm}\) 的零点
+
+
+\qfig{f45.png}{共模等效电路}
+
+\section{OTA 频响}
+
+\qfig{f46.png}{OTA 等效电路}
+
+系统函数为
+
+\[\frac{g_{m N} r_{O N}\left(2 g_{m} p+C_{E} s\right) r_{O P}}{2 r_{O P} r_{O N} C_{E} C_{L} s^{2}+\left[\left(2 r_{O N}+r_{O P}\right) C_{E}+r_{O P}\left(1+2 g_{m P} r_{O N}\right) C_{L}\right] s+2 g_{m P}\left(r_{O N}+r_{O P}\right)}\]
+
+主极点为 
+
+\[\omega_{p 1} \approx \frac{2 g_{m P}\left(r_{O N}+r_{O P}\right)}{\left(2 r_{O N}+r_{O P}\right) C_{E}+r_{O P}\left(1+2 g_{m} P r_{O N}\right) C_{L}}\]
+
+忽略第一项分母并且假定增益极大 \(2 g_{m} p r_{O N} \gg 1\)
+
+\[\omega_{p 1} \approx \frac{1}{\left(r_{O N} \| r_{O P}\right) C_{L}}\]
+
+那么标准形式为 
+\[\begin{aligned}
+    \frac{V_{o u t}}{V_{i n}} &=\frac{A_{0}}{1+s / \omega_{p 1}}\left(\frac{1}{1+s / \omega_{p 2}}+1\right) \\
+    &=\frac{A_{0}\left(2+s / \omega_{p 2}\right)}{\left(1+s / \omega_{p 1}\right)\left(1+s / \omega_{p 2}\right)}
+    \end{aligned}\]
+
+\section{增益带宽积}
+
+增益与带宽通常存在折中。
+通常用增益带宽积(GBW)来综合考量。
+
+\subsection{单极点电路}
+
+极点和 \(-3 dB\) 带宽可以认为相等。
+
+\[GBW = \abs{A_{v0}} \omega_{p,1}\]
+
+\subsection{多极点电路}
+
+
+
+对于两级结构有 
+
+\[\frac{V_{o u t}}{V_{i n}}=\frac{A_{0}^{2}}{\left(1+\frac{s}{\omega_{p}}\right)^{2}}\]
+
+即 
+
+\[\frac{A_{0}^{2}}{1+\frac{\omega_{-3 d B}^{2}}{\omega_{p}^{2}}}=\frac{A_{0}^{2}}{\sqrt{2}}\]
+
+解得
+
+\[\begin{aligned}
+    \omega_{-3 d B} &=\sqrt{\sqrt{2}-1 \omega_{p}} \\
+    & \approx 0.64 \omega_{p}
+    \end{aligned}\]
+
+因此
+
+\[\mathrm{GBW}=\sqrt{\sqrt{2}-1} A_{0}^{2} \omega_{p}\]
+
+对于 N 级联使 \(-3 dB\) 带宽减小，使增益带宽积增大
+
+\[\omega_{-3 d B}=\sqrt{\sqrt[N]{2}-1 \omega_{p}}\]
+
+\[\mathrm{GBW} = \omega_{-3 d B} A_0^N\]
+
+
+
+\qfig{f47.png}{多级共源共栅结构}
+
+% End Here
+
+\ifx\mainclass\undefined
+\end{document}
+\fi 

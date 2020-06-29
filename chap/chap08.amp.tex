@@ -1,0 +1,325 @@
+\ifx\mainclass\undefined
+\documentclass[cn,11pt,chinese,black,simple]{../elegantbook}
+\usepackage{array}
+\input{../needed.tex}
+\begin{document}
+\fi 
+
+% Start Here
+
+\chapter{运算放大器设计基础}
+
+我们粗略地把运放定义为“高增益的差动放大器”。所谓“高”,指的是对应用，增益足够高，通常增益范围在 \( 10^{1} \sim 10^{5} \) 。由于运放一般用来实现一个反馈系统，以提供稳定性、精度等指标，其开环增益的大小根据闭环电路的精度要求来设计。应用范围极广：信号运算、高速放大、滤波、缓冲器。
+
+理想的运放：无限大增益、无限高输入阻抗、零输出阻抗。
+实际的运放设计却是多个指标的复杂折中。
+
+
+
+\section{一级运放}
+
+一级运放的期望增益为 \(\dfrac{1}{\beta}\) ，那么误差为 \(\dfrac{\dfrac{1}{\beta} - \dfrac{V_{out}}{V_{in}}}{\dfrac{1}{\beta}}\) ，其中实际增益为 \(\dfrac{V_{o u t}}{V_{i n}}=\dfrac{A_{1}}{1+\dfrac{R_{2}}{R_{1}+R_{2}} A_{1}}\)
+
+\qfig{f87.png}{单级放大器}
+
+带有极点的运放处理阶跃信号时， \(V_{in} = \dfrac{a}{s}\) 。
+系统函数为
+
+\[ \dfrac{A(s)}{1+\beta A(s)}=\dfrac{A_{0} /\left(1+s / \omega_{0}\right)}{1+\beta A_{0} /\left(1+s / \omega_{0}\right)}=\dfrac{A_{0} /\left(1+\beta A_{0}\right)}{1+s /\left[\left(1+\beta A_{0}\right) \omega_{0}\right]} \approx \dfrac{1 / \beta}{1+s /\left(\beta A_{0} \omega_{0}\right)} \]
+
+输出为 \[
+    \begin{array}{l}
+        \begin{aligned}
+            
+            V_{\text {out }}(t) &= L ^{-1}\left[V_{\text {out }}(s)\right]= L ^{-1}\left[V_{\text {in }}(s) \dfrac{A(s)}{1+\beta A(s)}\right] \\
+            \approx & a \dfrac{1}{\beta}\left(1-\exp \dfrac{-t}{1 /\left(\beta A_{0} \omega_{0}\right)}\right) u(t) 
+        \end{aligned}
+    \end{array}    
+\]
+
+其中 \[1+\dfrac{R_{1}}{R_{2}}=\dfrac{1}{\beta}\]
+
+可以从时域的输出中计算速度以及对应约束的带宽。单位增益带宽定义为 \(A_0 \omega_0\) 其中 \(\omega_0\) 为主极点。
+
+\qfig{f88.png}{带有极点的单级放大器}
+
+
+\subsection{套筒式运放}
+
+设计流程相对固定。
+
+\qfig{f89.png}{套筒式共源共栅结构}
+
+\begin{enumerate}
+    \item 根据功率分配支路电流；
+    \item 根据摆幅分配过驱动电压；
+    \item 根据I-V特性计算宽长比；
+    \item 检查增益是否符合要求；
+    \item 若不符合要求，调整沟道长度。
+    \item 确定共模电平和偏置电压
+\end{enumerate}
+
+\begin{example}
+    Design a fully differential telescopic op amp with the following specifications: \(V_{D D}=3 V\), peak-to-peak differential output swing \(=3 V\), power dissipation \(=10 mW\), voltage gain \(=2000 .\) Assume that \(\mu_{n} C_{o x}=60 \mu A / V ^{2}, \mu_{p} C_{o x}=\) \(30 \mu A / V ^{2}, \lambda_{n}=0.1 V ^{-1}, \lambda_{p}=0.2 V ^{-1}\) (for an effective channel length of \(0.5 \mu m\) ), \(\gamma=0\), and \(V_{T H N}=\left|V_{T H P}\right|=\)
+\(0.7 V\)
+\end{example}
+
+\begin{solution}
+    从功耗与电压得到，总电流为 \(3.33 mA\)，分配各自 \(1.5 mA\) 给两路，其余给参考电流源。
+
+    摆幅为 \(3 V\) ，那么 X, Y 均可以摆动 \(1.5 V\)，且要保证3，4，5，6管子不进入线性区。同时管子1，7都是共源共栅结构，电压影响较小，可以适当的降低其过驱动电压，使之在线性区边缘。
+    
+    目前共有 \(1.5 V\) 过驱动电压，那么让电流最大的 9 号的尺寸可接受，使之接受 \(0.5 V\)；由于 PMOS 的迁移率低，分配的过驱动电压多一点， \(300 mV\)，剩下的均分给 NMOS 1，3 ，各自 \(200 mV\)，作为初始猜测。
+
+    计算时，为了简化，暂时忽略沟道调制 \[I_D = \dfrac{1}{2} \mu_n C_{ox} \dfrac{W}{L} (V_{OV})^2\]
+    带入求解 得到 \((W/L)_{1-4} = 1250\) ， \((W/L)_{5-8} = 1111\) ，\((W/L)_9 = 400\) 。
+
+    进一步验证增益 \[A_{v} \approx g_{m 1}\left[\left(g_{m 3} r_{O 3} r_{O 1}\right) \|\left(g_{m 5} r_{O 5} r_{O 7}\right)\right]\] 
+
+    发现结果为 \(1419\) 比指标低，一般通过调节尺寸来改进，又 \(\lambda \propto 1/L\) ，\(g_m r_o \propto \sqrt{2 \mu C_{ox} (W/L)/I_D} \dfrac{1}{\lambda} \) 那么 \( g_m r_o \propto \sqrt{W L / I_D}\) 。由于 PMOS 对性能影响较小，可以调制其尺寸。
+
+    \((W/L)_{5-8} = 1111\) 保持，但是\(L\) 翻倍时，增益变为 \(4000\) 。同时由于其尺寸变大，可以从尾电流源中分配一些电压。
+
+
+\end{solution}
+
+其问题也很明显：为获得最大摆幅 M1 和 M7 刚好工作在饱和区边缘，不得不严格控制。如果用套筒式共源共栅OTA运放设计单位增益缓冲器，输出电压范围小于一个阈值电压。并且很难使得输入输出短接。
+
+\qfig{f90.png}{单位增益缓冲器}
+
+\subsection{折叠式运放}
+
+需要两路电流，功耗比套筒式共源共栅大。
+输出阻抗小，增益比套筒式共源共栅小，比套筒式低2~3倍。
+输出摆幅比套筒式共源共栅大，比套筒式多1个过驱动电压。折叠式比套筒式的极点频率小。
+
+\begin{example}
+    Design a folded-cascode op amp with an NMOS input pair (Fig. 9.18) to satisfy the following specifications:
+\(V_{D D}=3 V ,\) differential output swing \(=3 V ,\) power dissipation \(=10 mW ,\) and voltage gain \(=2000 \) . Assume that \(\mu_{n} C_{o x}=60 \mu A / V ^{2}, \mu_{p} C_{o x}=\) \(30 \mu A / V ^{2}, \lambda_{n}=0.1 V ^{-1}, \lambda_{p}=0.2 V ^{-1}\) (for an effective channel length of \(0.5 \mu m\) ), \(\gamma=0\), and \(V_{T H N}=\left|V_{T H P}\right|= 0.7 V\)
+\end{example}
+
+\begin{solution}
+    同样从功耗与摆幅入手。分配输入对 \(1.5 mA\) ，共源共栅支路 \(1.5 mA\) ，剩余的电流给三个电流镜。
+    
+    摆幅决定了过驱动电压之和为 \(1.5 V\) ，对于过驱动电压，同样由于传导大电流，M5，6分配 \(0.5 V\)，由于 PMOS 的迁移率较低，M3，4 分配\(0.4 V\) ，M7，8，9，10 分配\(0.3 V\) 。那么可以得到输出最高电压为 \(3 - 0.5 - 0.4 = 2.1 V\) ，输出的最低电压为 \(0.3 + 0.3 = 0.6 V\) ，那么最合适的共模电平为 \(1.35 V\)。
+
+    对差分输入端进行电压分配，当输入输出短接有 \(V_{GS2} + V_{OD11} = 1.35 V\) ，初始假设 \(V_{OG11} = 0.4 V\) ，那么 \(V_{OD1,2} = 1.35 - 0.4 - 0.7 = 0.25 V\) 。
+
+    目前所有的过驱动电压与电流已知，求解尺寸。M1，2：\(400\) ，M3，4：\(312.5\)，M5，6： \(400\)，M7，8，9，10： \(277.8\) ， M11 \(312.5\) 。
+
+    计算增益，等效跨导为 \[ G_m = g_{m1} \dfrac{r_{o1} \| r_{o5}}{r_{o1} \| r_{o5} + \dfrac{r_{o3}}{1+g_{m3} r_{o3}}}\]
+
+    输出阻抗为 \[R_{out} = [(1 + g_{m7} r_{o7})r_{o9} + r_{o7}] \left|\right| [(1 + g_{m3} r_{o3})(r_{o5} \| r_{o1}) + r_{o3}]\]
+    
+    首先计算跨导，利用公式 \(g_m = 2 I_D / (V_{GS} - V_{TH})\) 。\(g_{m1,2} = 0.006 A/V\), \(g_{m3,4} = 0.00375 A/V\), \(g_{m5,6} = 0.006 A/V\), \(g_{m7,8,9,10} = 0.005 A/V\) 。计算沟道电阻 \(r_o = \dfrac{1}{\lambda I_D}\)，\(r_{o1,7,9} = 13.3 k\Omega\) ， \(r_{o5} = 3.33 k\Omega\) ， \(r_{o3} = 6.67 k\Omega\) 。
+    
+    带入得到增益为 \(383\) 
+
+    将 M1 扩充 3 倍，M5 扩充 5 倍， M3 扩充 1.8 倍，增益达到 2019 。
+
+
+\end{solution}
+
+\qfig{f91.png}{折叠式共源共栅}
+
+\qfig{f92.png}{折叠式共源共栅-输入输出短接}
+
+\subsection{共模反馈}
+
+输出与输入短接电路，普通电阻做负载，输入/输出共模
+电平比较稳定。
+
+\qfig{f93.png}{输出与输入短接}
+
+
+如果用电流源做负载，输入/输出共模电平不稳定，
+对环境参数较为敏感。
+如果管子参数与设计值稍有偏差，需要X和Y
+点付出更大的偏差来平衡电流。
+简单的差动反馈无法解决这个问题。
+必须采用共模反馈技术来稳定输出共模电平。
+
+\qfig{f94.png}{输出与输入短接-电流源负载}
+
+
+\section{两级运放}
+
+\subsection{反馈系统的稳定性}
+
+\qfig{f96.png}{潜在的不稳定性}
+
+反馈系统存在潜在的不稳定性，如果 \(\beta H\left(j \omega_{1}\right)=-1,\) 则 系统在 \(\omega_{1}\) 处发生振荡。 振荡时，环路的总相移为\(\degr{360}\)，环路增益\(\geq 1\)。
+
+环路增益的幅值为1的频率点称为 “增益交点(GX)”，环路增益的相位为-180度时的频率点称为 “相位交点(PX)”。PX必须发生在GX之后，确保：在-180度相位时，环路增
+益已经小于1，不会形成振荡。
+
+如果反馈减弱，之前描述的系统变得更稳定。
+
+\subsubsection{单极点系统}
+\[
+    \begin{array}{l}
+        H(s)=A_{0} /\left(1+s / \omega_{0}\right) \\
+        \frac{Y}{X}(s)=\frac{\frac{A_{0}}{1+\beta A_{0}}}{1+\frac{s}{\omega_{0}\left(1+\beta A_{0}\right)}}
+    \end{array}\]
+
+相移始终小于 \(\degr{90}\)，系统无条件稳定。
+
+\subsubsection{双极点系统}
+
+相位最终趋于-180度，因此，当环路增益的幅值
+降至1时，相位尚未相移180度，系统稳定。反馈变弱，系统会更稳定。
+
+\subsubsection{三极点系统}
+
+三极点系统可能不稳定，尤其是PX点比GX点左移更明显。
+
+PX点与GX点重合时，闭环增益的幅值无限大，从而导致
+振荡。
+
+相位裕度越大，PX与GX相隔越远。一般保证 \(\degr{60}\) 的相位裕度。
+
+\[P M=180^{\circ}+\angle \beta H\left(\omega=\omega_{G X}\right)\]
+
+
+
+\subsection{相位裕度}
+
+
+GX低于PX不足以保持不出现近似的尖峰或者虽然稳定，但仍有可能产生减幅振荡。。PX与GX相隔足够远，系统更稳定，无减幅振荡。
+
+\subsection{Miller OTA}
+
+已知运放有两个极点和一个右半平面零点，设零点大于\(10 \omega_{GX}\)，  为了使相位裕度大于 \(\degr{60}\)，第二极点至少高于 \(2.2 \omega_{GX}\)
+
+\qfig{f97.png}{密勒补偿电路}
+
+加入补偿电容后，根据密勒定理：
+与\(R_I\)并联的容值增大，该点对应的极点频率减小；
+负反馈降低第二级的输出电阻，输出点对应的极点频率增大。拉远两个极点频率的距离，提高相位裕度。产生一个右半平面零点频率，会增加相移和增益，
+使相位裕度恶化。应将零点频率推离原点。
+
+\[
+\begin{array}{l}
+\frac{V_{o u t}}{V_{i n}}(s)=\frac{g_{m I} g_{m I I} R_{I} R_{I I}\left(1-s C_{c} / g_{m I I}\right)}{R_{I} R_{I I} \xi s^{2}+\left[g_{m I I} R_{I} R_{I I} C_{c}+R_{I I}\left(C_{I I}+C_{c}\right)+R_{I}\left(C_{I}+C_{c}\right)\right] s+1} \\
+\end{array}
+\]
+
+
+其中
+\[\xi=C_{I} C_{I I}+C_{I} C_{c}+C_{I I} C_{c}\]
+
+主极点近似法：
+\[
+\begin{array}{l}
+    \begin{aligned}
+        
+    \omega_{p 1} &\approx \frac{1}{g_{m I I} R_{I} R_{I I} C_{c}+R_{I I}\left(C_{I I}+C_{c}\right)+R_{I}\left(C_{I}+C_{c}\right)} \approx \frac{1}{g_{m I I} R_{I} R_{I I} C_{c}} \\
+    \omega_{p 2} &\approx \frac{g_{m I I} C_{c}}{C_{I} C_{I I}+C_{I} C_{c}+C_{I I} C_{c}} \approx \frac{g_{m I I}}{C_{I I}}
+    \end{aligned} 
+\end{array}
+\]
+
+满足 \[ C_{I I} \gg C_{I}, \quad C_{c} \gg C_{I}\]
+
+增益带宽积为 \[G B W=A_{v 0} \omega_{p 1} \approx g_{m I} R_{I} g_{m I I} R_{I I} \frac{1}{g_{m I I} R_{I} R_{I I} C_{c}}=\frac{g_{m I}}{C_{c}}\]
+
+\qfig{f98.png}{密勒OTA}
+
+通常
+给定这些指标
+直流增益 \(A_v\)
+增益带宽积 \(GBW\)
+输入共模范围 \(ICMR\)
+负载电容 \(C_L\)
+转换速率 \(SR\)
+输出电压摆幅
+功耗 \(P_{diss}\)
+
+其中 \[A_{v1} = -g_{m1}(r_{o1} \| r_{o4})\]
+
+\[A_{v2} = -g_{m6} (r_{o6 \| r_{o7}})\]
+
+\[SR = \dfrac{I_5}{C_c}\]
+
+\[GBW = \dfrac{g_{mI}}{C_c} = \dfrac{g_{m1}}{C_c} = \omega_{GX}\]
+
+\[\omega_{p2} = \dfrac{g_{mII}}{C_{II}} = \dfrac{g_{m6}}{C_L}\]
+
+\[\omega_z = \dfrac{g_{mII}}{C_c} = \dfrac{g_{m6}}{C_c}\]
+
+输出共模下限 
+\[V_{SS} + \sqrt{\dfrac{I_5}{\mu_n C_{ox} (W/L)_1}} + V_{TH1max} + V_{OD5}\]
+
+上限为 \[\begin{array}{l}
+    V_{D D}-\left|V_{S G 3}\right|+V_{T H 1_{-} \min } \\
+    =V_{D D}-\left(\left|V_{S G 3}\right|-\left|V_{T H 3_{-} \max }\right|\right)-\left|V_{T H 3_{-} \max }\right|+V_{T H 1_{-} \min } \\
+    =V_{D D}-\sqrt{\frac{I_{5}}{\mu_{p} C_{o x}(W / L)_{3}}}-\left|V_{T H 3_{3} \max }\right|+V_{T H_{1} \min }
+    \end{array}\]
+
+\begin{example}
+    \(A_{v}>5000\)
+\(G B W>5 M H z\)
+输出电压摆幅 \(=\pm 2 V\)
+\(V_{D D}=2.5 V\)
+\(C_{L}=10 p F\)
+\(I C M R=-1 \sim 2 V\)
+\(V_{S S}=-2.5 V\)
+\(S R>10 V / \mu s\)
+\(P_{\text {diss}} \leq 2 m W\)
+\(\mu_{n} C_{o x}=110 \mu A / V^{2}, \mu_{p} C_{o x}=50 \mu A / V^{2} \quad\left|V_{T H 3_{-} m a x}\right|=0.85 V\)
+\(V_{T H 1} \min =0.55 V\)
+\(\lambda_{n}=0.04 V^{-1}, \lambda_{p}=0.05 V^{-1} \quad V_{T H 1_{-} \max }=0.85 V\)
+\(L=1 \mu m\)
+\end{example}
+
+\begin{solution}
+    根据相位裕度要求 \(\omega_z > 10 \omega_{DX}\) 且 \(\omega_{p2} > 2.2 \omega_{GX}\)
+    得到 \(\dfrac{g_{m6}}{C_c} > 10 \dfrac{g_{m2}}{C_c}\) 与 \(\dfrac{g_{m6}}{C_L} > 2.2 \dfrac{g_{m2}}{C_c}\) 
+    化简 \(g_{m6} > 10 g_{m2}\) \(C_c > \dfrac{2.2 C_2}{10} = 0.22 C_L = 2.2 pF\)
+    暂时选定为 \(C_c = 3 pF\)
+
+
+    根据转换速率 \(SR = \dfrac{I_5}{C_c}\) 解得 \(I_5 = 30 \mu A\)
+
+    根据共模上限确定 \((W/L)_{3,4} = 15\) \[2 V = V_{D D}-\sqrt{\frac{I_{5}}{\mu_{p} C_{o x}(W / L)_{3}}}-\left|V_{T H 3_{3} \max }\right|+V_{T H_{1} \min }\]
+
+    根据增益带宽积确定 \(g_{m1}\) 
+    \[g_{m1 = GBW  C_C = 94.25 \mu S}\]
+
+    通过偏置电流计算 \((W/L)_{1,2}\)
+    \[(W / L)_{1}=\frac{g_{m 1}^{2}}{2 \mu_{n} C_{o x}\left(I_{5} / 2\right)}=2.79 \approx 3.0=(W / L)_{2}\]
+
+    通过共模下限确定 \(V_{OD5}\) 与 \((W/L)_5\)
+
+    \[\begin{array}{l}
+        V_{S S}+\sqrt{\frac{I_{5}}{\mu_{n} C_{o x}(W / L)_{1}}}+V_{T H 1_{-} \max }+V_{O D 5}=-1 V \Rightarrow V_{O D 5}=350 mV \\
+        (W / L)_{5}=\frac{2 I_{5}}{\mu_{n} C_{o x} V_{O D 5}^{2}}=4.49 \approx 4.5
+    \end{array}\]
+
+    由相位裕度的要求 \(g_{m9} \geq 10 g_{m1,2} = 942.5 \mu S\)
+
+    假设电流镜像确定 \(V_{SG4} = V_{SG6}\) 解得 \((W/L)_6 = (W/L)_4  \dfrac{g_{m6}}{g_{m4}} = 94.25\)
+    其中 \(g_{m4}\) 可求。
+
+    那么 \[I_6 = \dfrac{g_{m6}^2}{2 \mu_p C_{ox} (W/L)_6} = 94.5 \mu A\]
+
+    再次通过镜像电流源确定 \((W/L)_7 = (W/L)_5 \dfrac{I_6}{I_5}\)
+
+    检查M6和M7消耗的过驱动电压，符合摆幅要求
+
+    \[V_{O D 6}=\sqrt{\frac{2 I_{6,7}}{\mu_{p} C_{o x}(W / L)_{6}}}=0.201 V \quad V_{O D 7}=\sqrt{\frac{2 I_{6,7}}{\mu_{n} C_{o x}(W / L)_{7}}}=0.351 V\]
+
+    功耗为 \[P_{diss} = 5 V (30 \mu A + 95 \mu A) = 0.625 mW\]
+
+    增益为 \(A_v = A_1 A_2 = 7696\)
+
+\end{solution}
+
+
+
+
+% End Here
+
+\ifx\mainclass\undefined
+\end{document}
+\fi 

@@ -1,0 +1,54 @@
+\ifx\mainclass\undefined
+\documentclass[cn,11pt,chinese,black,simple]{../elegantbook}
+\usepackage{array}
+\input{../needed.tex}
+\begin{document}
+\fi 
+
+% Start Here
+
+\chapter{SPICE 模型参数}
+
+注意，\(\epsilon_{ox} = 3.51511 \times  10^{-11} \) F/m
+
+\begin{longtable}{lll}
+    \caption{SPICE \(0.5 \mu m\) 模型参数} \\
+    \toprule \textbf{NMOS Model} & \textbf{PMOS Model} & \textbf{Para}                                                                                                            \\
+    \midrule
+    \endfirsthead
+    
+    \toprule \textbf{NMOS Model} & \textbf{PMOS Model} & \textbf{Para}                                                                                                            \\
+    \midrule
+    \endhead
+
+    \hline
+    \multicolumn{3}{c}{见下页}\\   
+    \bottomrule
+    \endfoot
+
+    \bottomrule
+    \endlastfoot
+    LEVEL = 1           & LEVEL = 1           &                                                                                                                             \\
+    VTO = 0.7           & VTO = −0.8          & \begin{tabular}[c]{@{}l@{}}VTO: threshold voltage with zero VSB \\ (unit: V)\end{tabular}                                   \\
+    GAMMA = 0.45        & GAMMA = 0.4         & \begin{tabular}[c]{@{}l@{}}GAMMA: body-effect coefficient \\ (unit: V\(^{1/2}\))\end{tabular}                                      \\
+    PHI = 0.9           & PHI = 0.8           & PHI: 2$\Phi$F (unit: V)                                                                                                     \\
+    NSUB = 9e+14        & NSUB = 5e+14        & NSUB: substrate doping (unit: cm\(^{−3}\))                                                                                         \\
+    LD = 0.08e-6       & LD = 0.09e-6       & LD: source/drain side diffusion (unit: m)                                                                                   \\
+    UO = 350e-4           & UO = 100e-4            & UO: channel mobility (unit: m\(^2\)/V/s)                                                                                        \\
+    LAMBDA = 0.1        & LAMBDA = 0.2        & \begin{tabular}[c]{@{}l@{}}LAMBDA: channel-length modulation coefficient \\ (unit: V\(^{-1}\))\end{tabular}                        \\
+    TOX = 9e-9         & TOX = 9e-9         & TOX: gate-oxide thickness (unit: m)                                                                                         \\
+    PB = 0.9            & PB = 0.9            & \begin{tabular}[c]{@{}l@{}}PB: source/drain junction built-in potential \\ (unit: V)\end{tabular}                           \\
+    CJ = 0.56e-3       & CJ = 0.94e-3       & \begin{tabular}[c]{@{}l@{}}CJ: source/drain bottom-plate \\ junction capacitance per unit area \\ (unit: F/m\(^2\))\end{tabular} \\
+    CJSW = 0.35e-11    & CJSW = 0.32e-11    & \begin{tabular}[c]{@{}l@{}}CJSW: source/drain sidewall \\ junction capacitance per unit length \\ (unit: F/m)\end{tabular}  \\
+    MJ = 0.45           & MJ = 0.5            & MJ: exponent in CJ equation (unitless)                                                                                      \\
+    MJSW = 0.2          & MJSW = 0.3          & MJSW: exponent in CJSW equation (unitless)                                                                                  \\
+    CGDO = 0.4e-9      & CGDO = 0.3e-9      & \begin{tabular}[c]{@{}l@{}}CGDO: gate-drain overlap capacitance \\ per unit width (unit: F/m)\end{tabular}                  \\
+    JS = 1.0e-8        & JS = 0.5e-8        & \begin{tabular}[c]{@{}l@{}}JS: source/drain leakage current\\  per unit area (unit: A/m\(^2\))\end{tabular}                      \\
+                        &                     & \begin{tabular}[c]{@{}l@{}}CGSO: gate-source overlap capacitance \\ per unit width (unit: F/m)\end{tabular}                 \\
+     
+\end{longtable}
+% End Here
+
+\ifx\mainclass\undefined
+\end{document}
+\fi 

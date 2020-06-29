@@ -1,0 +1,84 @@
+\documentclass[cn,11pt,chinese,black,simple]{elegantbook}
+
+\def\mainclass{main}
+
+\title{电子电路}
+% \subtitle{数字设计初步}
+
+\author{Pannenets.F}
+% \institute{微电子学院}
+\date{\today}
+% \version{4}
+\bioinfo{分类}{笔记}
+
+\extrainfo{Je reviendrai et je serai des millions. —— <<Spartacus>>}
+\setcounter{tocdepth}{4}
+\newcommand{\dollar}{\mbox{\textdollar}}
+\lstset{
+  mathescape = false}
+% \logo{logo-blue.png}
+\cover{covernew.jpg}
+
+% 本文档命令
+\usepackage{array}
+\newcommand{\ccr}[1]{\makecell{{\color{#1}\rule{1cm}{1cm}}}}
+\input{needed.tex}
+
+\begin{document}
+
+\maketitle
+\frontmatter
+
+\chapter*{特别声明}
+\markboth{Introduction}{前言}
+
+本手册记录了\textbf{电子电路 2020 春}的部分知识点，主要是依据考试范围进行整理。
+
+本笔记采用了 Elegant \LaTeX{} 项目的 \href{https://github.com/ElegantLaTeX/ElegantBook}{Elegant Book} 模板，封面等图片来自无版权图片网站，全部插图来自课程的课件。受限于老师的课件版权问题，这部分没有上传。除此之外为了迅速笔记，源文件中采取的许多不是很美观的方式进行书写。如果能对以后的同学提供帮助的话不胜荣幸，同时对于文中的错误欢迎不吝赐教，进行修订。
+
+\vskip 1.5cm
+
+
+\begin{flushright}
+Pannenets.F
+\today
+\end{flushright}
+
+\tableofcontents
+%\listofchanges
+
+\mainmatter
+
+\part{BJT基础}
+
+\input{chap/chap01.bjt.tex}
+
+\part{MOS 放大器}
+
+\input{chap/chap02.mos.tex}
+
+\input{chap/chap03.diff.tex}
+
+\input{chap/chap04.mirror.tex}
+
+\part{深入理解放大器}
+
+\input{chap/chap05.freq.tex}
+
+\input{chap/chap06.noise.tex}
+
+\input{chap/chap07.feedback.tex}
+
+\part{运算放大器}
+
+\input{chap/chap08.amp.tex}
+
+\input{chap/chap09.op.tex}
+
+\appendix
+
+\addappheadtotoc
+
+\input{chap/appendix.spice.tex}
+
+\end{document}
